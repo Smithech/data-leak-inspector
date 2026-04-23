@@ -15,15 +15,13 @@ def test_high_risk_credit_card():
 
     evaluator = RiskEvaluator()
     risk = evaluator.evaluate(summary)
-    
+
     assert risk == RiskLevel.HIGH
 
 
 def test_medium_risk_many_emails():
 
-    summary = PIISummary(
-        emails=PIIFinding(count=5, examples=["a@test.com"])
-    )
+    summary = PIISummary(emails=PIIFinding(count=5, examples=["a@test.com"]))
 
     evaluator = RiskEvaluator()
     risk = evaluator.evaluate(summary)
@@ -33,9 +31,7 @@ def test_medium_risk_many_emails():
 
 def test_low_risk_single_email():
 
-    summary = PIISummary(
-        emails=PIIFinding(count=1, examples=["a@test.com"])
-    )
+    summary = PIISummary(emails=PIIFinding(count=1, examples=["a@test.com"]))
 
     evaluator = RiskEvaluator()
     risk = evaluator.evaluate(summary)
@@ -47,5 +43,5 @@ def test_low_risk_no_pii():
     summary = PIISummary()
     evaluator = RiskEvaluator()
     risk = evaluator.evaluate(summary)
-    
+
     assert risk == RiskLevel.LOW

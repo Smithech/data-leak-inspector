@@ -8,8 +8,8 @@ class CreditCardDetector(BaseDetector):
     """
     Detector for credit card numbers.
 
-    This class identifies credit card numbers within a text using a regular expression. 
-    If matches are found, it returns a PIIFinding object containing the count and 
+    This class identifies credit card numbers within a text using a regular expression.
+    If matches are found, it returns a PIIFinding object containing the count and
     sample examples.
     """
 

@@ -8,6 +8,7 @@ a PII detection summary into a risk classification.
 from leak_inspector.domain.enums import RiskLevel
 from leak_inspector.domain.models import PIISummary
 
+
 class RiskEvaluator:
     """
     Determines the risk level of a file based on detected PII.
@@ -48,7 +49,7 @@ class RiskEvaluator:
             return RiskLevel.LOW
 
         return RiskLevel.LOW
-    
+
     def _has_credit_cards(self, summary: PIISummary) -> bool:
         """
         Check whether any credit card numbers were detected.

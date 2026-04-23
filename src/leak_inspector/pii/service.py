@@ -8,7 +8,7 @@ class PIIDetectorService:
     """
     Service to manage PII detection.
 
-    This class aggregates multiple PII detectors and provides a method to analyze text for 
+    This class aggregates multiple PII detectors and provides a method to analyze text for
     potential PII leaks. It returns a summary of findings across all detectors.
     """
 

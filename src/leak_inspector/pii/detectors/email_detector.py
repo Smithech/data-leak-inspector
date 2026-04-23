@@ -8,8 +8,8 @@ class EmailDetector(BaseDetector):
     """
     Detector for email addresses.
 
-    This class identifies email addresses within a text using a regular expression. 
-    If matches are found, it returns a PIIFinding object containing the count and 
+    This class identifies email addresses within a text using a regular expression.
+    If matches are found, it returns a PIIFinding object containing the count and
     sample examples.
     """
 

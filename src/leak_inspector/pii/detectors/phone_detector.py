@@ -8,8 +8,8 @@ class PhoneDetector(BaseDetector):
     """
     Detector for phone numbers.
 
-    This class identifies phone numbers within a text using a regular expression. 
-    If matches are found, it returns a PIIFinding object containing the count and 
+    This class identifies phone numbers within a text using a regular expression.
+    If matches are found, it returns a PIIFinding object containing the count and
     sample examples.
     """
 
