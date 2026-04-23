@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import List, Optional
 
 class AppConfig(BaseSettings):
-    app_dir: Path = Path.home() / ".mi_herramienta"
+    app_dir: Path = Path.home() / ".data_leak_inspector"
 
     accounts_dir: Optional[Path] = None
     logs_dir: Optional[Path] = None
@@ -11,7 +11,7 @@ class AppConfig(BaseSettings):
     credentials_path: Optional[Path] = None
     log_file: Optional[Path] = None
 
-    scan_file_types: List[str] = ["docx", "xlsx", "pdf", "txt", "csv"]
+    scan_file_types: List[str] = ["txt"]
 
     log_level: str = "INFO"
     auto_fix_permissions: bool = False
