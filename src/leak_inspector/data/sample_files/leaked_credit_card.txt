@@ -1,0 +1,5 @@
+Suspicious log entry:
+
+User submitted card number 4111 1111 1111 1111 during checkout.
+
+Please investigate immediately.
