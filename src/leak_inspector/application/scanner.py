@@ -16,6 +16,9 @@ from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.domain.models import ScanResult
 from leak_inspector.pii.service import PIIDetectorService
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class Scanner:
@@ -41,14 +44,21 @@ class Scanner:
         Scan all files from the storage provider.
         """
 
-        for file_metadata in self.storage.list_files():
+        logger.info("Starting scan")
+
+        files = list(self.storage.list_files())
+        logger.info("Found %d files", len(files))
+
+        for file_metadata in files:
             if self.repository.is_scanned(
                 file_metadata.id,
                 file_metadata.modified_time,
             ):
+                logger.info("Skipping already scanned file: %s", file_metadata.name)
                 continue
 
             file_content = self.storage.get_file_content(file_metadata.id)
+            logger.info("Scanning file: %s", file_metadata.name)
 
             summary = self.pii_detector.analyze(file_content.content)
 
@@ -64,3 +74,7 @@ class Scanner:
             self.repository.save(result)
 
             yield result
+
+        logger.info("Scan completed")
+
+        
