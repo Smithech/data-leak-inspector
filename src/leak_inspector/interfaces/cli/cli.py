@@ -4,13 +4,15 @@ CLI command definitions for Data Leak Inspector.
 
 import typer
 
-from leak_inspector.application.scanner import Scanner
 from leak_inspector.application.risk_evaluator import RiskEvaluator
-from leak_inspector.infrastructure.persistence.sqlite_repository import SQLiteScanRepository 
+from leak_inspector.application.scanner import Scanner
+from leak_inspector.infrastructure.persistence.sqlite_repository import (
+    SQLiteScanRepository,
+)
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
+from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
 from leak_inspector.pii.detectors.email_detector import EmailDetector
 from leak_inspector.pii.detectors.phone_detector import PhoneDetector
-from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
 from leak_inspector.pii.service import PIIDetectorService
 
 app = typer.Typer(help="Data Leak Inspector CLI")
@@ -29,7 +31,7 @@ def scan(
         False,
         "--demo",
         help="Use demo dataset",
-    )
+    ),
 ):
     """
     Scan files for sensitive information.

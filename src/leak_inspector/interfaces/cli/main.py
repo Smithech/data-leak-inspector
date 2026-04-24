@@ -4,6 +4,7 @@ CLI entrypoint.
 
 from leak_inspector.interfaces.cli.cli import app
 
+
 def main():
     app()
 

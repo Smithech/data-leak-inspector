@@ -4,7 +4,7 @@ Unit tests for the risk evaluation service.
 
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.domain.enums import RiskLevel
-from leak_inspector.domain.models import PIISummary, PIIFinding
+from leak_inspector.domain.models import PIIFinding, PIISummary
 
 
 def test_high_risk_credit_card():

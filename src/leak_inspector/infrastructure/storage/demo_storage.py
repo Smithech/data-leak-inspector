@@ -8,9 +8,8 @@ requiring any external storage integration.
 """
 
 from datetime import datetime
-from typing import Iterable
-
 from importlib import resources
+from typing import Iterable
 
 from leak_inspector.application.ports.storage import Storage
 from leak_inspector.domain.models import FileContent, FileMetadata

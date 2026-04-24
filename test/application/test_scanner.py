@@ -4,13 +4,13 @@ Integration-style unit tests for the scanner.
 
 from datetime import datetime
 
-from leak_inspector.application.scanner import Scanner
-from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.ports.scan_repository import ScanRepository
+from leak_inspector.application.risk_evaluator import RiskEvaluator
+from leak_inspector.application.scanner import Scanner
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
+from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
 from leak_inspector.pii.detectors.email_detector import EmailDetector
 from leak_inspector.pii.detectors.phone_detector import PhoneDetector
-from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
 from leak_inspector.pii.service import PIIDetectorService
 
 
@@ -90,7 +90,7 @@ def test_scanner_skips_already_scanned_files():
     """
 
     scanner, _ = build_scanner()
-    
+
     first_run = list(scanner.scan())
 
     assert len(first_run) > 0

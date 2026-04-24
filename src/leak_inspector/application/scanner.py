@@ -9,10 +9,10 @@ their content for sensitive information, evaluates the risk level,
 and produces scan results.
 """
 
-from typing import Iterable, List
+from typing import Iterable
 
-from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.ports.scan_repository import ScanRepository
+from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.domain.models import ScanResult
 from leak_inspector.pii.service import PIIDetectorService
@@ -42,7 +42,6 @@ class Scanner:
         """
 
         for file_metadata in self.storage.list_files():
-
             if self.repository.is_scanned(
                 file_metadata.id,
                 file_metadata.modified_time,
