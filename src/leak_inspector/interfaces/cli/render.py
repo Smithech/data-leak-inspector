@@ -2,7 +2,9 @@
 CLI rendering utilities using Rich.
 """
 
+from collections import Counter
 from rich.console import Console
+from rich.panel import Panel
 from rich.table import Table
 
 from leak_inspector.domain.models import ScanResult
@@ -47,3 +49,23 @@ def render_scan_results(results: list[ScanResult]) -> None:
         )
 
     console.print(table)
+
+
+def render_summary(results: list[ScanResult]) -> None:
+    """
+    Display aggregated scan statistics.
+    """
+
+    counter = Counter(r.risk_level.value for r in results)
+
+    summary_table = Table.grid(padding=(0, 2))
+
+    summary_table.add_row("Files scanned:", str(len(results)))
+    summary_table.add_row("High risk:", f"[red]{counter.get('HIGH', 0)}[/red]")
+    summary_table.add_row(
+        "Medium risk:", f"[yellow]{counter.get('MEDIUM', 0)}[/yellow]"
+    )
+    summary_table.add_row("Low risk:", f"[green]{counter.get('LOW', 0)}[/green]")
+
+    console.print()
+    console.print(Panel(summary_table, title="Scan Summary"))

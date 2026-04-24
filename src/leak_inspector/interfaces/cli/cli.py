@@ -10,6 +10,7 @@ from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
 )
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
+from leak_inspector.interfaces.cli.render import render_scan_results, render_summary
 from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
 from leak_inspector.pii.detectors.email_detector import EmailDetector
 from leak_inspector.pii.detectors.phone_detector import PhoneDetector
@@ -69,8 +70,9 @@ def scan(
         typer.echo("No new files to scan.")
         return
 
-    for result in results:
-        typer.echo(f"✓ {result.file_id:<25} {result.risk_level.value}")
+    render_scan_results(results)
+
+    render_summary(results)
 
 
 @app.command()
