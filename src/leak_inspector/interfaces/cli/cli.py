@@ -2,6 +2,7 @@
 CLI command definitions for Data Leak Inspector.
 """
 
+import logging
 import typer
 
 from leak_inspector.application.risk_evaluator import RiskEvaluator
@@ -11,6 +12,7 @@ from leak_inspector.infrastructure.persistence.sqlite_repository import (
 )
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.interfaces.cli.render import render_scan_results, render_summary
+from leak_inspector.logging.config import configure_logging
 from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
 from leak_inspector.pii.detectors.email_detector import EmailDetector
 from leak_inspector.pii.detectors.phone_detector import PhoneDetector
@@ -28,15 +30,22 @@ def auth():
 
 @app.command()
 def scan(
-    demo: bool = typer.Option(
-        False,
-        "--demo",
-        help="Use demo dataset",
-    ),
+    demo: bool = typer.Option(False, "--demo", help="Use demo dataset"),
+    verbose: bool = typer.Option(False, "--verbose", help="Enable debug logging"),
+    quiet: bool = typer.Option(False, "--quiet", help="Reduce logging output")
 ):
     """
     Scan files for sensitive information.
     """
+
+    if verbose:
+        level = logging.DEBUG
+    elif quiet:
+        level = logging.WARNING
+    else:
+        level = logging.INFO
+
+    configure_logging(level)
 
     if not demo:
         typer.echo("Currently only demo mode is supported.")
