@@ -37,7 +37,9 @@ class GoogleDriveStorage(Storage):
         """
         Retrieve file content from Google Drive.
         """
-
+        if not file_metadata.id.startswith("gdrive_"):
+            raise ValueError(f"Invalid gdrive id: {file_metadata.id}")
+        
         raw_id = file_metadata.id.replace("gdrive_", "")
 
         content = self.client.download_file(raw_id)
