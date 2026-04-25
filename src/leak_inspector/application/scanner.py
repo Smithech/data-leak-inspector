@@ -68,7 +68,7 @@ class Scanner:
             logger.info("Scanning file: %s", file_metadata.name)
 
             logger.debug("Reading file content: %s", file_metadata.name)
-            file_content = self.storage.get_file_content(file_metadata.id)
+            file_content = self.storage.get_file_content(file_metadata)
 
             logger.debug("Running PII detection")
             summary = self.pii_detector.analyze(file_content.content)
