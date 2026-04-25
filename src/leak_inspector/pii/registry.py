@@ -22,13 +22,9 @@ def _discover_detector_classes() -> List[Type[BaseDetector]]:
     detector_classes = []
 
     for _, module_name, _ in pkgutil.iter_modules(detectors_pkg.__path__):
-
-        module = importlib.import_module(
-            f"{detectors_pkg.__name__}.{module_name}"
-        )
+        module = importlib.import_module(f"{detectors_pkg.__name__}.{module_name}")
 
         for _, obj in inspect.getmembers(module, inspect.isclass):
-
             if issubclass(obj, BaseDetector) and obj is not BaseDetector:
                 detector_classes.append(obj)
 

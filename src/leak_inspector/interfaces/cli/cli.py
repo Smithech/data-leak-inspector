@@ -35,7 +35,9 @@ def scan(
     demo: bool = typer.Option(False, "--demo", help="Use demo dataset"),
     verbose: bool = typer.Option(False, "--verbose", help="Enable debug logging"),
     quiet: bool = typer.Option(False, "--quiet", help="Reduce logging output"),
-    report: Path | None = typer.Option(None, "--report", help="Export scan results to a JSON report file.")
+    report: Path | None = typer.Option(
+        None, "--report", help="Export scan results to a JSON report file."
+    ),
 ):
     """
     Scan files for sensitive information.

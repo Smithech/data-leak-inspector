@@ -6,6 +6,7 @@ from leak_inspector.pii.base import BaseDetector
 
 logger = logging.getLogger(__name__)
 
+
 class PIIDetectorService:
     """
     Service to manage PII detection.
