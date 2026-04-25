@@ -22,12 +22,12 @@ class GoogleDriveStorage(Storage):
 
         raw_files = self.client.list_files()
 
-        for f in raw_files:
+        for file in raw_files:
             yield FileMetadata(
-                id=f["id"],
-                name=f["name"],
-                modified_time=datetime.fromisoformat(f["modifiedTime"]),
-                mime_type=f["mimeType"],
+                id=f"gdrive_{file["id"]}",
+                name=file["name"],
+                modified_time=datetime.fromisoformat(file["modifiedTime"]),
+                mime_type=file["mimeType"],
                 permissions=None,
                 web_view_link=None
             )
@@ -37,7 +37,10 @@ class GoogleDriveStorage(Storage):
         """
         Retrieve file content from Google Drive.
         """
-        content = self.client.download_file(file_metadata.id)
+
+        raw_id = file_metadata.id.replace("gdrive_", "")
+
+        content = self.client.download_file(raw_id)
 
         return FileContent(
             content=content,
