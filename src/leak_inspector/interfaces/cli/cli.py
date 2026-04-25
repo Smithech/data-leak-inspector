@@ -5,14 +5,18 @@ CLI command definitions for Data Leak Inspector.
 import logging
 from pathlib import Path
 import typer
+from typing import NoReturn
 
+from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
 from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
 )
+from leak_inspector.infrastructure.gdrive.client import FakeGoogleDriveClient
 from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
+from leak_inspector.infrastructure.storage.gdrive_storage import GoogleDriveStorage
 from leak_inspector.interfaces.cli.render import render_scan_results, render_summary
 from leak_inspector.logging.config import configure_logging
 from leak_inspector.pii.registry import load_detectors
@@ -36,6 +40,11 @@ def scan(
     report: Path | None = typer.Option(
         None, "--report", help="Export scan results to a JSON report file."
     ),
+    gdrive: bool = typer.Option(
+        False,
+        "--gdrive",
+        help="Use Google Drive as the storage backend (mock implementation).",
+    )
 ):
     """
     Scan files and detect sensitive information (PII).
@@ -55,13 +64,12 @@ def scan(
 
     configure_logging(level)
 
-    if not demo:
-        typer.echo("Currently only demo mode is supported.")
-        raise typer.Exit(code=1)
+    if demo and gdrive:
+        _exit_with_error("Cannot use --demo and --gdrive together.")
 
     typer.echo("Scanning demo dataset...\n")
 
-    storage = DemoStorage()
+    storage = _select_storage(demo, gdrive)
 
     pii_service = PIIDetectorService(load_detectors())
 
@@ -94,3 +102,21 @@ def scan(
 @app.command()
 def report():
     print("📊 Reporte generado")
+
+
+def _exit_with_error(message: str) -> NoReturn:
+    """
+    Print an error message and exit the CLI.
+    """
+    typer.echo(f"Error: {message}")
+    raise typer.Exit(code=1)
+
+
+def _select_storage(demo: bool, gdrive: bool) -> Storage:
+    if demo:
+        return DemoStorage()
+
+    if gdrive:
+        return GoogleDriveStorage(FakeGoogleDriveClient())
+
+    _exit_with_error("No storage selected. Use --demo or --gdrive.")
