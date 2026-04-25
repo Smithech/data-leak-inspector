@@ -40,7 +40,7 @@ class Storage(ABC):
         pass
 
     @abstractmethod
-    def get_file_content(self, file_id: str) -> FileContent:
+    def get_file_content(self, file_metadata: FileMetadata) -> FileContent:
         """
         Retrieve the content of a specific file.
 
