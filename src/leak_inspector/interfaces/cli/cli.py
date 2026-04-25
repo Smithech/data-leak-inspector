@@ -15,9 +15,7 @@ from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.interfaces.cli.render import render_scan_results, render_summary
 from leak_inspector.logging.config import configure_logging
-from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
-from leak_inspector.pii.detectors.email_detector import EmailDetector
-from leak_inspector.pii.detectors.phone_detector import PhoneDetector
+from leak_inspector.pii.registry import load_detectors
 from leak_inspector.pii.service import PIIDetectorService
 
 app = typer.Typer(help="Data Leak Inspector CLI")
@@ -60,13 +58,7 @@ def scan(
 
     storage = DemoStorage()
 
-    pii_service = PIIDetectorService(
-        [
-            EmailDetector(),
-            PhoneDetector(),
-            CreditCardDetector(),
-        ]
-    )
+    pii_service = PIIDetectorService(load_detectors())
 
     evaluator = RiskEvaluator()
     repository = SQLiteScanRepository()
