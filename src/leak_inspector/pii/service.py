@@ -1,8 +1,10 @@
+import logging
 from typing import List
 
 from leak_inspector.domain.models import PIISummary
 from leak_inspector.pii.base import BaseDetector
 
+logger = logging.getLogger(__name__)
 
 class PIIDetectorService:
     """
@@ -19,6 +21,8 @@ class PIIDetectorService:
         summary = PIISummary()
 
         for detector in self.detectors:
+            logger.debug("Running detector: %s", detector.type)
+
             finding = detector.detect(text)
 
             if finding:
