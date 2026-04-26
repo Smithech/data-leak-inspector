@@ -59,6 +59,7 @@ class Scanner:
             )
 
             if self.repository.is_scanned(
+                file_metadata.source,
                 file_metadata.id,
                 file_metadata.modified_time,
             ):
@@ -81,6 +82,7 @@ class Scanner:
                 modified_time=file_metadata.modified_time,
                 pii_summary=summary,
                 risk_level=risk,
+                source=file_metadata.source
             )
 
             logger.debug("Saving scan result to repository")

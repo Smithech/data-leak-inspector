@@ -11,6 +11,7 @@ class FileMetadata(BaseModel):
     name: str
     mime_type: str
     modified_time: datetime
+    source: str
     permissions: Optional[List[str]] = None
     web_view_link: Optional[str] = None
 
@@ -48,3 +49,4 @@ class ScanResult(BaseModel):
     modified_time: datetime
     pii_summary: PIISummary
     risk_level: RiskLevel
+    source: str
