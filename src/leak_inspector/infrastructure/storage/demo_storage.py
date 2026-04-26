@@ -37,10 +37,11 @@ class DemoStorage(Storage):
             if resource.name.endswith(".txt"):
                 files.append(
                     FileMetadata(
-                        id=f"demo_{resource.name}",
+                        id=resource.name,
                         name=resource.name,
                         mime_type="text/plain",
                         modified_time=datetime(2024, 1, 1),
+                        source="demo",
                         permissions=None,
                         web_view_link=None,
                     )
@@ -53,9 +54,7 @@ class DemoStorage(Storage):
         Retrieve the content of a specific demo file.
         """
 
-        raw_name = file_metadata.id.replace("demo_", "")
-
-        resource = resources.files(self.PACKAGE).joinpath(raw_name)
+        resource = resources.files(self.PACKAGE).joinpath(file_metadata.id)
         text = resource.read_text()
 
         return FileContent(

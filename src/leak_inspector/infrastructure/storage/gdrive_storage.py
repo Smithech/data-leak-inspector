@@ -24,10 +24,11 @@ class GoogleDriveStorage(Storage):
 
         for file in raw_files:
             yield FileMetadata(
-                id=f"gdrive_{file["id"]}",
+                id=file["id"],
                 name=file["name"],
                 modified_time=datetime.fromisoformat(file["modifiedTime"]),
                 mime_type=file["mimeType"],
+                source="gdrive",
                 permissions=None,
                 web_view_link=None
             )
@@ -37,12 +38,10 @@ class GoogleDriveStorage(Storage):
         """
         Retrieve file content from Google Drive.
         """
-        if not file_metadata.id.startswith("gdrive_"):
-            raise ValueError(f"Invalid gdrive id: {file_metadata.id}")
-        
-        raw_id = file_metadata.id.replace("gdrive_", "")
+        if file_metadata.source != "gdrive":
+            raise ValueError(f"Invalid source: {file_metadata.id}")
 
-        content = self.client.download_file(raw_id)
+        content = self.client.download_file(file_metadata.id)
 
         return FileContent(
             content=content,

@@ -26,23 +26,24 @@ class SQLiteScanRepository(ScanRepository):
             modified_time TEXT NOT NULL,
             risk_level TEXT NOT NULL,
             pii_summary TEXT NOT NULL,
-            PRIMARY KEY (file_id, modified_time)
+            source TEXT NOT NULL,
+            PRIMARY KEY (source, file_id, modified_time)
         )
         """
 
         self.conn.execute(query)
         self.conn.commit()
 
-    def is_scanned(self, file_id: str, modified_time: datetime) -> bool:
+    def is_scanned(self, source: str, file_id: str, modified_time: datetime) -> bool:
         query = """
         SELECT 1 FROM scan_results
-        WHERE file_id = ? AND modified_time = ?
+        WHERE source = ? AND file_id = ? AND modified_time = ?
         LIMIT 1
         """
 
         cursor = self.conn.execute(
             query,
-            (file_id, modified_time.isoformat()),
+            (source, file_id, modified_time.isoformat()),
         )
 
         return cursor.fetchone() is not None
@@ -53,9 +54,10 @@ class SQLiteScanRepository(ScanRepository):
             file_id,
             modified_time,
             risk_level,
-            pii_summary
+            pii_summary,
+            source
         )
-        VALUES (?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?)
         """
 
         self.conn.execute(
@@ -63,8 +65,9 @@ class SQLiteScanRepository(ScanRepository):
             (
                 result.file_id,
                 result.modified_time.isoformat(),
-                result.risk_level.value,
+                result.risk_level.value,                
                 json.dumps(result.pii_summary.model_dump(exclude_none=True)),
+                result.source,
             ),
         )
 
