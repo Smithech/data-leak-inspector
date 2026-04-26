@@ -20,13 +20,15 @@ class FakeScanRepository(ScanRepository):
     """
 
     def __init__(self):
-        self.data = set()
+        self.saved = []
+        self.scanned = set()
 
-    def is_scanned(self, file_id: str, modified_time: datetime) -> bool:
-        return (file_id, modified_time) in self.data
+    def is_scanned(self, source: str, file_id: str, modified_time: datetime) -> bool:
+        return (source, file_id, modified_time) in self.scanned
 
     def save(self, result):
-        self.data.add((result.file_id, result.modified_time))
+        self.saved.append(result)
+        self.scanned.add((result.source, result.file_id, result.modified_time))
 
 
 def build_scanner():
