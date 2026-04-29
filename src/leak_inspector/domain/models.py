@@ -50,3 +50,13 @@ class ScanResult(BaseModel):
     pii_summary: PIISummary
     risk_level: RiskLevel
     source: str
+
+
+class FileExposure:
+    """
+    Represents exposure level of a file based on metadata.
+    """
+
+    is_public: bool
+    is_shared: bool
+    is_private: bool
