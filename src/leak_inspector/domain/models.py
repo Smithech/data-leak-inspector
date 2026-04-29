@@ -59,4 +59,4 @@ class FileExposure(BaseModel):
     Represents exposure level of a file based on metadata.
     """
 
-    level: ExposureLevel
+    exposure_level: ExposureLevel
