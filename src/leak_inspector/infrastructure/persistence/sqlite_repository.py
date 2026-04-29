@@ -53,6 +53,12 @@ class SQLiteScanRepository(ScanRepository):
         return cursor.fetchone() is not None
 
     def save(self, result: ScanResult) -> None:
+        pii_summary_json = (
+            json.dumps(result.pii_summary.model_dump(exclude_none=True)) 
+            if result.pii_summary 
+            else None
+        )
+
         query = """
         INSERT INTO scan_results (
             file_id,
@@ -75,11 +81,10 @@ class SQLiteScanRepository(ScanRepository):
                 result.source,
                 result.modified_time.isoformat(),
                 result.mode,
-                result.exposure_level,
-                result.risk_level.value,                
-                json.dumps(result.pii_summary.model_dump(exclude_none=True)),
-                
-            ),
+                result.exposure_level if result.exposure_level else None,
+                result.risk_level.value if result.risk_level else None,                
+                pii_summary_json    
+            )
         )
 
         self.conn.commit()
