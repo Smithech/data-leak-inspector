@@ -81,7 +81,7 @@ class SQLiteScanRepository(ScanRepository):
                 result.source,
                 result.modified_time.isoformat(),
                 result.mode,
-                result.exposure_level if result.exposure_level else None,
+                result.exposure_level.value if result.exposure_level else None,
                 result.risk_level.value if result.risk_level else None,                
                 pii_summary_json    
             )
