@@ -28,7 +28,7 @@ dev = [
 ]
 
 [project.scripts]
-dli = "data_leak_inspector.interfaces.cli.main:main"
+dli = "leak_inspector.interfaces.cli.main:main"
 
 [tool.setuptools]
 package-dir = {"" = "src"}
