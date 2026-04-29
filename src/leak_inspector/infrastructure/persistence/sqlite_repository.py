@@ -23,10 +23,14 @@ class SQLiteScanRepository(ScanRepository):
         query = """
         CREATE TABLE IF NOT EXISTS scan_results (
             file_id TEXT NOT NULL,
-            modified_time TEXT NOT NULL,
-            risk_level TEXT NOT NULL,
-            pii_summary TEXT NOT NULL,
+            name TEXT NOT NULL,
             source TEXT NOT NULL,
+            modified_time TEXT NOT NULL,
+            mode TEXT NOT NULL,
+            exposure_level TEXT,
+            risk_level TEXT,
+            pii_summary TEXT,
+            
             PRIMARY KEY (source, file_id, modified_time)
         )
         """
@@ -52,22 +56,29 @@ class SQLiteScanRepository(ScanRepository):
         query = """
         INSERT INTO scan_results (
             file_id,
+            name,
+            source,
             modified_time,
+            mode,
+            exposure_level,
             risk_level,
-            pii_summary,
-            source
+            pii_summary            
         )
-        VALUES (?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         """
 
         self.conn.execute(
             query,
             (
                 result.file_id,
+                result.name,
+                result.source,
                 result.modified_time.isoformat(),
+                result.mode,
+                result.exposure_level,
                 result.risk_level.value,                
                 json.dumps(result.pii_summary.model_dump(exclude_none=True)),
-                result.source,
+                
             ),
         )
 
