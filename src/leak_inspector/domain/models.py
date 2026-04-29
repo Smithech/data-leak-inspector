@@ -48,8 +48,9 @@ class PIISummary(BaseModel):
 class ScanResult(BaseModel):
     file_id: str
     modified_time: datetime
-    pii_summary: PIISummary
-    risk_level: RiskLevel
+    pii_summary: PIISummary | None
+    risk_level: RiskLevel | None
+    exposure_level: ExposureLevel | None
     source: str
 
 
