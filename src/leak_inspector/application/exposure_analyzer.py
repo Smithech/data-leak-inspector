@@ -27,18 +27,18 @@ class ExposureAnalyzer:
 
         # No permissions → assume private
         if not permissions:
-            return FileExposure(level=ExposureLevel.PRIVATE)
+            return FileExposure(exposure_level=ExposureLevel.PRIVATE)
 
         permissions = [str(p).lower() for p in permissions]
 
         permissions = [str(p).lower() for p in permissions]
 
         if any(p in ("anyone", "public") for p in permissions):
-            return FileExposure(level=ExposureLevel.PUBLIC)
+            return FileExposure(exposure_level=ExposureLevel.PUBLIC)
 
         # Shared file (multiple users or explicit sharing)
         if len(permissions) > 1:
-            return FileExposure(level=ExposureLevel.SHARED)
+            return FileExposure(exposure_level=ExposureLevel.SHARED)
 
         # Single permission but not public → shared
-        return FileExposure(level=ExposureLevel.SHARED)
+        return FileExposure(exposure_level=ExposureLevel.SHARED)
