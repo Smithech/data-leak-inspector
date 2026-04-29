@@ -10,3 +10,9 @@ class RiskLevel(Enum):
 class ScanMode(str, Enum):
     BASIC = "basic"
     DEEP = "deep"
+
+
+class ExposureLevel(Enum):
+    PUBLIC = "public"
+    SHARED = "shared"
+    PRIVATE = "private"

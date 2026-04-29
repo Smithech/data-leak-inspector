@@ -3,6 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
+from .enums import ExposureLevel
 from .enums import RiskLevel
 
 
@@ -52,11 +53,9 @@ class ScanResult(BaseModel):
     source: str
 
 
-class FileExposure:
+class FileExposure(BaseModel):
     """
     Represents exposure level of a file based on metadata.
     """
 
-    is_public: bool
-    is_shared: bool
-    is_private: bool
+    level: ExposureLevel
