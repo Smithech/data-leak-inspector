@@ -6,6 +6,7 @@ from collections import Counter
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+import typer
 
 from leak_inspector.domain.enums import ScanMode
 from leak_inspector.domain.models import ScanResult
@@ -17,21 +18,20 @@ def _format_label(label: str, width: int = 7) -> str:
     return label.upper().ljust(width)
 
 
-def risk_color(risk: str) -> str:
-    """
-    Map risk levels to terminal colors.
-    """
+def _color_for_exposure(level: str):
+    return {
+        "public": typer.colors.RED,
+        "shared": typer.colors.YELLOW,
+        "private": typer.colors.GREEN,
+    }[level]
 
-    if risk == "LOW":
-        return "green"
 
-    if risk == "MEDIUM":
-        return "yellow"
-
-    if risk == "HIGH":
-        return "red"
-
-    return "white"
+def _color_for_risk(level: str):
+    return {
+        "high": typer.colors.RED,
+        "medium": typer.colors.YELLOW,
+        "low": typer.colors.GREEN,
+    }[level]
 
 
 def _render_basic(results):
@@ -43,19 +43,23 @@ def _render_basic(results):
         "private": 0,
     }
 
+    counts = {"public": 0, "shared": 0, "private": 0}
+
     for result in results:
-        level = result.exposure_level.value.upper()
+        level = result.exposure_level.value
         label = _format_label(level)
+        color = _color_for_exposure(level)
 
-        print(f"[{label}] {result.name}")
+        typer.secho(f"[{label}]", fg=color, bold=True, nl=False)
+        typer.echo(f" {result.name}")
 
-        counts[result.exposure_level.value] += 1
+        counts[level] += 1
 
-    print("\nSummary:")
-    print(f"  Total files: {len(results)}")
-    print(f"  Public: {counts['public']}")
-    print(f"  Shared: {counts['shared']}")
-    print(f"  Private: {counts['private']}")
+    typer.echo("\nSummary:")
+    typer.echo(f"  Total files: {len(results)}")
+    typer.echo(f"  Public: {counts['public']}")
+    typer.echo(f"  Shared: {counts['shared']}")
+    typer.echo(f"  Private: {counts['private']}")
 
 
 def _render_deep(results):
@@ -70,26 +74,28 @@ def _render_deep(results):
     for result in results:
         level = result.risk_level.value
         label = _format_label(level)
+        color = _color_for_exposure(level)
 
-        print(f"[{label}] {result.name}")
+        typer.secho(f"[{label}]", fg=color, bold=True, nl=False)
+        typer.echo(f" {result.name}")
 
         if result.pii_summary:
             data = result.pii_summary.model_dump(exclude_none=True)
 
             if data:
                 for key, finding in data.items():
-                    print(f"          → {key}: {finding.count} matches")
+                    typer.echo(f"          → {key}: {finding.count} matches")
             else:
-                print("          → no sensitive data found")
+                typer.echo("          → no sensitive data found")
 
         counts[level] += 1
-        print()
+        typer.echo()
 
-    print("Summary:")
-    print(f"  Total files: {len(results)}")
-    print(f"  High risk: {counts['high']}")
-    print(f"  Medium risk: {counts['medium']}")
-    print(f"  Low risk: {counts['low']}")
+    typer.echo("Summary:")
+    typer.echo(f"  Total files: {len(results)}")
+    typer.echo(f"  High risk: {counts['high']}")
+    typer.echo(f"  Medium risk: {counts['medium']}")
+    typer.echo(f"  Low risk: {counts['low']}")
 
 
 def render_scan_results(results: list[ScanResult]) -> None:
