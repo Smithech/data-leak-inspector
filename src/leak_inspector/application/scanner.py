@@ -50,16 +50,16 @@ class Scanner:
         Scan all files from the storage provider.
         """
 
-        logger.info("Starting scan")
+        logger.info(f"Starting {self.mode.value} scan")
 
         logger.debug("Fetching file metadata from storage")
 
         files = list(self.storage.list_files())
-        logger.info("Found %d files", len(files))
+        logger.info(f"Found {len(files)} files")
 
         for file_metadata in files:
             logger.debug(
-                "Checking if file %s (%s) was already scanned",
+                "Checking if file '%s' (%s) was already scanned",
                 file_metadata.name,
                 file_metadata.modified_time,
             )
@@ -69,10 +69,10 @@ class Scanner:
                 file_metadata.id,
                 file_metadata.modified_time,
             ):
-                logger.info("Skipping already scanned file: %s", file_metadata.name)
+                logger.info(f"Skipping already scanned file: {file_metadata.name}")
                 continue
 
-            logger.info("Scanning file: %s", file_metadata.name)
+            logger.info(f"Scanning file: {file_metadata.name}")
 
             if self.mode == ScanMode.BASIC:
                 exposure = self.exposure_analyzer.analyze(file_metadata)
@@ -91,7 +91,7 @@ class Scanner:
 
             elif self.mode == ScanMode.DEEP:
 
-                logger.debug("Reading file content: %s", file_metadata.name)
+                logger.debug(f"Reading file content: {file_metadata.name}")
                 file_content = self.storage.get_file_content(file_metadata)
 
                 logger.debug("Running PII detection")
@@ -112,7 +112,7 @@ class Scanner:
                 )
                 
             else:
-                raise ValueError(f"Unsupported scan mode: {self.mode}")
+                raise ValueError(f"Unsupported scan mode: {self.mode.value}")
 
             logger.debug("Saving scan result to repository")
             self.repository.save(result)

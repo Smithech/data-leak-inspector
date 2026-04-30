@@ -28,9 +28,7 @@ app = typer.Typer(help="Data Leak Inspector CLI")
 
 @app.command()
 def auth():
-    print("Autenticating process...")
-    typer.secho("Autenticación exitosa", fg=typer.colors.GREEN)
-    typer.secho("Token generado")
+    pass
 
 
 @app.command()
@@ -60,7 +58,6 @@ def scan(
         dli scan --demo
         dli scan --demo --report report.json
     """
-    typer.echo(mode)
 
     if verbose:
         level = logging.DEBUG
@@ -74,7 +71,10 @@ def scan(
     if demo and gdrive:
         _exit_with_error("Cannot use --demo and --gdrive together.")
 
-    typer.echo("Scanning demo dataset...\n")
+    if demo:
+        typer.echo("Scanning demo dataset...\n")
+    elif gdrive:
+        typer.echo("Scanning Google Drive...\n")
 
     storage = _select_storage(demo, gdrive)
 
@@ -96,6 +96,8 @@ def scan(
         typer.echo("No new files to scan.")
         return
 
+    typer.echo()
+    
     render_scan_results(results)
 
     if report:
@@ -106,7 +108,7 @@ def scan(
 
 @app.command()
 def report():
-    print("📊 Reporte generado")
+    pass
 
 
 def _exit_with_error(message: str) -> NoReturn:
