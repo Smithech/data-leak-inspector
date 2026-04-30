@@ -4,41 +4,46 @@ from leak_inspector.domain.enums import ExposureLevel
 from leak_inspector.domain.models import FileMetadata, FileExposure
 
 
+class ExposureResult:
+    def __init__(self, level: ExposureLevel):
+        self.level = level
+
+
 class ExposureAnalyzer:
     """
     Analyze file metadata to determine exposure level.
 
     This analyzer uses file permissions to classify files into:
     - public: accessible by anyone
-    - shared: accessible by specific users
+    - shared: accessible by specific users (domain or muyltiple users)
     - private: only accessible by the owner
-
-    NOTE:
-    This is a simplified MVP implementation. Google Drive permissions
-    will later provide richer data (roles, domains, etc.).
     """
 
-    def analyze(self, metadata: FileMetadata) -> FileExposure:
+    def analyze(self, metadata: FileMetadata) -> ExposureResult:
         """
         Analyze file metadata and return exposure classification.
         """
+        #print(type(metadata.permissions[0])
+        permissions = metadata.permissions or []
+        
 
-        permissions = metadata.permissions
-
-        # No permissions → assume private
+        # No permissions → assume PRIVATE
         if not permissions:
-            return FileExposure(exposure_level=ExposureLevel.PRIVATE)
+            return ExposureResult(ExposureLevel.PRIVATE)
 
-        permissions = [str(p).lower() for p in permissions]
+        # PUBLIC → anyone 
+        for p in permissions:
+            
+            if p.get("type") == "anyone":
+                return ExposureResult(ExposureLevel.PUBLIC)
 
-        permissions = [str(p).lower() for p in permissions]
-
-        if any(p in ("anyone", "public") for p in permissions):
-            return FileExposure(exposure_level=ExposureLevel.PUBLIC)
-
-        # Shared file (multiple users or explicit sharing)
+        # SHARED → domain or multiple users
         if len(permissions) > 1:
-            return FileExposure(exposure_level=ExposureLevel.SHARED)
+            return ExposureResult(ExposureLevel.SHARED)
+        
+        for p in permissions:
+            if p.get("type") in ("domain", "group"):
+                return ExposureResult(ExposureLevel.SHARED)
 
-        # Single permission but not public → shared
-        return FileExposure(exposure_level=ExposureLevel.SHARED)
+        # default
+        return ExposureResult(ExposureLevel.PRIVATE)

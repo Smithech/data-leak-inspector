@@ -13,7 +13,7 @@ class FileMetadata(BaseModel):
     mime_type: str
     modified_time: datetime
     source: str
-    permissions: Optional[List[str]] = None
+    permissions: Optional[List[dict]] = None
     web_view_link: Optional[str] = None
 
 

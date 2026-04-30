@@ -27,9 +27,15 @@ class GoogleDriveStorage(Storage):
                 id=file["id"],
                 name=file["name"],
                 mime_type=file["mimeType"],
-                modified_time=datetime.fromisoformat(file["modifiedTime"].replace("Z", "+00:00")),                
+                modified_time=datetime.fromisoformat(file["modifiedTime"].replace("Z", "+00:00")),              
                 source="gdrive",
-                permissions=None,
+                permissions=[
+                    {
+                        "type": p.get("type"),
+                        "role": p.get("role"),
+                    }
+                    for p in file.get("permissions", [])
+                ],
                 web_view_link=None
             )
         

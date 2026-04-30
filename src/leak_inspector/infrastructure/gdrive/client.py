@@ -52,7 +52,7 @@ class GoogleDriveClient:
                 .list(
                     q="mimeType != 'application/vnd.google-apps.folder'",
                     spaces="drive",
-                    fields="nextPageToken, files(id, name, mimeType, modifiedTime)",
+                    fields="nextPageToken, files(id, name, mimeType, modifiedTime, permissions(type, role))",
                     pageToken=page_token,
                 )
                 .execute()
