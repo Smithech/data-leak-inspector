@@ -3,7 +3,7 @@ from typing import Iterable
 
 from leak_inspector.domain.models import FileContent, FileMetadata
 from leak_inspector.application.ports.storage import Storage
-from leak_inspector.infrastructure.gdrive.client import FakeGoogleDriveClient
+from leak_inspector.infrastructure.gdrive.fake_client import FakeGoogleDriveClient
 
 
 class GoogleDriveStorage(Storage):

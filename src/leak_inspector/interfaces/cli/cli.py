@@ -14,7 +14,7 @@ from leak_inspector.domain.enums import ScanMode
 from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
 )
-from leak_inspector.infrastructure.gdrive.client import FakeGoogleDriveClient
+from leak_inspector.infrastructure.gdrive.fake_client import FakeGoogleDriveClient
 from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.infrastructure.storage.gdrive_storage import GoogleDriveStorage
