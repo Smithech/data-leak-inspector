@@ -3,7 +3,7 @@ from typing import Iterable
 
 from leak_inspector.domain.models import FileContent, FileMetadata
 from leak_inspector.application.ports.storage import Storage
-from leak_inspector.infrastructure.gdrive.fake_client import FakeGoogleDriveClient
+from leak_inspector.infrastructure.gdrive.client import GoogleDriveClient
 
 
 class GoogleDriveStorage(Storage):
@@ -11,7 +11,7 @@ class GoogleDriveStorage(Storage):
     Storage implementation for Google Drive.
     """
 
-    def __init__(self, client: FakeGoogleDriveClient):
+    def __init__(self, client: GoogleDriveClient):
         self.client = client
     
 
@@ -26,8 +26,8 @@ class GoogleDriveStorage(Storage):
             yield FileMetadata(
                 id=file["id"],
                 name=file["name"],
-                modified_time=datetime.fromisoformat(file["modifiedTime"]),
                 mime_type=file["mimeType"],
+                modified_time=datetime.fromisoformat(file["modifiedTime"].replace("Z", "+00:00")),                
                 source="gdrive",
                 permissions=None,
                 web_view_link=None
@@ -38,12 +38,9 @@ class GoogleDriveStorage(Storage):
         """
         Retrieve file content from Google Drive.
         """
-        if file_metadata.source != "gdrive":
-            raise ValueError(f"Invalid source: {file_metadata.id}")
-
-        content = self.client.download_file(file_metadata.id)
+        pass
 
         return FileContent(
-            content=content,
-            metadata=file_metadata
+            content=NotImplemented,
+            metadata=NotImplemented
         )

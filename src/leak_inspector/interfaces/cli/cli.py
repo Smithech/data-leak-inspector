@@ -14,7 +14,7 @@ from leak_inspector.domain.enums import ScanMode
 from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
 )
-from leak_inspector.infrastructure.gdrive.fake_client import FakeGoogleDriveClient
+from leak_inspector.infrastructure.gdrive.client import GoogleDriveClient
 from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.infrastructure.storage.gdrive_storage import GoogleDriveStorage
@@ -122,6 +122,13 @@ def _select_storage(demo: bool, gdrive: bool) -> Storage:
         return DemoStorage()
 
     if gdrive:
-        return GoogleDriveStorage(FakeGoogleDriveClient())
+        base = Path("~/Documents/dli").expanduser()
+
+        client = GoogleDriveClient(
+            credentials_path=base / "credentials.json",
+            token_path=base / "token.json",
+        )
+
+        return GoogleDriveStorage(client)
 
     _exit_with_error("No storage selected. Use --demo or --gdrive.")
