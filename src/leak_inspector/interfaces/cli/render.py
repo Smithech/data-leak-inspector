@@ -11,8 +11,19 @@ import typer
 from leak_inspector.domain.enums import ScanMode
 from leak_inspector.domain.models import ScanResult
 
-
 console = Console()
+
+RISK_PRIORITY = {
+    "high": 0,
+    "medium": 1,
+    "low": 2,
+}
+
+EXPOSURE_PRIORITY = {
+    "public": 0,
+    "shared": 1,
+    "private": 2,
+}
 
 def _format_label(label: str, width: int = 7) -> str:
     return label.upper().ljust(width)
@@ -36,6 +47,14 @@ def _color_for_risk(level: str):
 
 def _render_basic(results):
     print("SCAN RESULTS (BASIC)\n")
+
+    results = sorted(
+        results,
+        key=lambda r: (
+            EXPOSURE_PRIORITY.get(r.exposure_level.value if r.exposure_level else "private", 99),
+            r.name
+        )
+    )
 
     counts = {
         "public": 0,
@@ -64,6 +83,14 @@ def _render_basic(results):
 
 def _render_deep(results):
     print("SCAN RESULTS (DEEP)\n")
+
+    results = sorted(
+        results,
+        key=lambda r: (
+            RISK_PRIORITY.get(r.risk_level.value if r.risk_level else "low", 99),
+            r.name
+        )
+    )
 
     counts = {
         "high": 0,
