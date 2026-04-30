@@ -52,7 +52,7 @@ def _render_basic(results):
         results,
         key=lambda r: (
             EXPOSURE_PRIORITY.get(r.exposure_level.value if r.exposure_level else "private", 99),
-            r.name
+            r.name or "",
         )
     )
 
@@ -88,7 +88,7 @@ def _render_deep(results):
         results,
         key=lambda r: (
             RISK_PRIORITY.get(r.risk_level.value if r.risk_level else "low", 99),
-            r.name
+            r.name or "",
         )
     )
 
