@@ -10,6 +10,7 @@ from typing import NoReturn
 from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
+from leak_inspector.domain.enums import ScanMode
 from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
 )
@@ -17,7 +18,7 @@ from leak_inspector.infrastructure.gdrive.client import FakeGoogleDriveClient
 from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.infrastructure.storage.gdrive_storage import GoogleDriveStorage
-from leak_inspector.interfaces.cli.render import render_scan_results, render_summary
+from leak_inspector.interfaces.cli.render import render_scan_results
 from leak_inspector.logging.config import configure_logging
 from leak_inspector.pii.registry import load_detectors
 from leak_inspector.pii.service import PIIDetectorService
@@ -44,6 +45,11 @@ def scan(
         False,
         "--gdrive",
         help="Use Google Drive as the storage backend (mock implementation).",
+    ),
+    mode: ScanMode = typer.Option(
+        ScanMode.BASIC,
+        "--mode",
+        help="Scan mode: basic (metadata) or deep (content analysis).",
     )
 ):
     """
@@ -54,6 +60,7 @@ def scan(
         dli scan --demo
         dli scan --demo --report report.json
     """
+    typer.echo(mode)
 
     if verbose:
         level = logging.DEBUG
@@ -90,8 +97,6 @@ def scan(
         return
 
     render_scan_results(results)
-
-    render_summary(results)
 
     if report:
         reporter = JsonReporter()
