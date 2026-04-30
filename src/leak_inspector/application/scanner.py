@@ -84,6 +84,7 @@ class Scanner:
                     modified_time=file_metadata.modified_time,
                     mode=ScanMode.BASIC,
                     exposure_level=exposure.level,
+                    exposure_reason=exposure.reason,
                     pii_summary=None,
                     risk_level=None
                 )

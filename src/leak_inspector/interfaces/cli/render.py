@@ -72,6 +72,9 @@ def _render_basic(results):
         typer.secho(f"[{label}]", fg=color, bold=True, nl=False)
         typer.echo(f" {result.name}")
 
+        if result.exposure_reason:
+            typer.echo(f"          → {result.exposure_reason}")
+
         counts[level] += 1
 
     typer.echo("\nSummary:")

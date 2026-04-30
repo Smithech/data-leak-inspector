@@ -53,11 +53,12 @@ class ScanResult(BaseModel):
     mode: ScanMode
 
     # BASIC mode
-    exposure_level: ExposureLevel | None
+    exposure_level: ExposureLevel | None = None
+    exposure_reason: str | None = None
 
     # DEEP mode
-    pii_summary: PIISummary | None
-    risk_level: RiskLevel | None
+    pii_summary: PIISummary | None = None
+    risk_level: RiskLevel | None = None
     
 
 

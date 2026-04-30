@@ -5,8 +5,9 @@ from leak_inspector.domain.models import FileMetadata, FileExposure
 
 
 class ExposureResult:
-    def __init__(self, level: ExposureLevel):
+    def __init__(self, level: ExposureLevel, reason:str | None = None):
         self.level = level
+        self.reason = reason
 
 
 class ExposureAnalyzer:
@@ -29,21 +30,35 @@ class ExposureAnalyzer:
 
         # No permissions → assume PRIVATE
         if not permissions:
-            return ExposureResult(ExposureLevel.PRIVATE)
+            return ExposureResult(
+                ExposureLevel.PRIVATE,
+                "no explicit permissions found"
+            )
 
         # PUBLIC → anyone 
-        for p in permissions:
-            
+        for p in permissions:            
             if p.get("type") == "anyone":
-                return ExposureResult(ExposureLevel.PUBLIC)
+                role = p.get("role", "reader")
+                return ExposureResult(
+                    ExposureLevel.PUBLIC,
+                    f"anyone with link ({role})"
+                )
 
         # SHARED → domain or multiple users
         if len(permissions) > 1:
-            return ExposureResult(ExposureLevel.SHARED)
+            # exclude owner
+            user_count = len(permissions) - 1
+            return ExposureResult(
+                ExposureLevel.SHARED,
+                f"shared with {user_count} user(s)"
+            )
         
         for p in permissions:
             if p.get("type") in ("domain", "group"):
-                return ExposureResult(ExposureLevel.SHARED)
+                return ExposureResult(
+                    ExposureLevel.SHARED,
+                    f"shared with {p.get('type')}"
+                )
 
         # default
         return ExposureResult(ExposureLevel.PRIVATE)
