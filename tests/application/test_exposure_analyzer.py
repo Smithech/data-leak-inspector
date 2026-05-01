@@ -22,28 +22,41 @@ def test_private_file():
 
     result = ExposureAnalyzer().analyze(metadata)
 
-    assert result.exposure_level == ExposureLevel.PRIVATE
+    assert result.level == ExposureLevel.PRIVATE
 
 
 def test_public_file():
-    metadata = make_metadata(permissions=["public"])
+    metadata = make_metadata(
+        permissions=[
+            {"type": "anyone", "role": "reader"}
+        ]
+    )
 
     result = ExposureAnalyzer().analyze(metadata)
 
-    assert result.exposure_level == ExposureLevel.PUBLIC
+    assert result.level == ExposureLevel.PUBLIC
 
 
 def test_shared_file_multiple_users():
-    metadata = make_metadata(permissions=["user:a", "user:b"])
+    metadata = make_metadata(
+        permissions=[
+            {"type": "user", "id": "a"},
+            {"type": "user", "id": "b"},
+        ]
+    )
 
     result = ExposureAnalyzer().analyze(metadata)
 
-    assert result.exposure_level == ExposureLevel.SHARED
+    assert result.level == ExposureLevel.SHARED
 
 
 def test_shared_file_single_user():
-    metadata = make_metadata(permissions=["user:a"])
+    metadata = make_metadata(
+        permissions=[
+            {"type": "user", "id": "a"}
+        ]
+    )
 
     result = ExposureAnalyzer().analyze(metadata)
 
-    assert result.exposure_level == ExposureLevel.SHARED
+    assert result.level == ExposureLevel.PRIVATE
