@@ -64,11 +64,7 @@ class Scanner:
                 file_metadata.modified_time,
             )
 
-            if self.repository.is_scanned(
-                file_metadata.source,
-                file_metadata.id,
-                file_metadata.modified_time,
-            ):
+            if self.repository.is_scanned(file_metadata):
                 logger.info(f"Skipping already scanned file: {file_metadata.name}")
                 continue
 

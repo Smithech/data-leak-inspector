@@ -7,7 +7,7 @@ import sqlite3
 from datetime import datetime
 
 from leak_inspector.application.ports.scan_repository import ScanRepository
-from leak_inspector.domain.models import ScanResult
+from leak_inspector.domain.models import FileMetadata, ScanResult
 
 
 class SQLiteScanRepository(ScanRepository):
@@ -38,17 +38,22 @@ class SQLiteScanRepository(ScanRepository):
         self.conn.execute(query)
         self.conn.commit()
 
-    def is_scanned(self, source: str, file_id: str, modified_time: datetime) -> bool:
+    def is_scanned(self, file_metadata: FileMetadata) -> bool:
         query = """
         SELECT 1 FROM scan_results
-        WHERE source = ? AND file_id = ? AND modified_time = ?
+        WHERE source = :source 
+            AND file_id = :file_id 
+            AND modified_time = :modified_time
         LIMIT 1
         """
 
-        cursor = self.conn.execute(
-            query,
-            (source, file_id, modified_time.isoformat()),
-        )
+        params = {
+            "source": file_metadata.source, 
+            "file_id": file_metadata.id, 
+            "modified_time": file_metadata.modified_time.isoformat(),
+        }
+
+        cursor = self.conn.execute(query, params)
 
         return cursor.fetchone() is not None
 
