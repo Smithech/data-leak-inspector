@@ -63,14 +63,21 @@ class Scanner:
                 file_metadata.name,
                 file_metadata.modified_time,
             )
+            yield from self.scan_file(file_metadata)
 
-            if self.repository.is_scanned(file_metadata):
-                logger.info(f"Skipping already scanned file: {file_metadata.name}")
-                continue
+            
 
-            logger.info(f"Scanning file: {file_metadata.name}")
+        logger.info("Scan completed")
+    
+    def scan_file(self, file_metadata):
+        if self.repository.is_scanned(file_metadata):
+            logger.info(f"Skipping already scanned file: {file_metadata.name}")
+            
+            return []
 
-            if self.mode == ScanMode.BASIC:
+        logger.info(f"Scanning file: {file_metadata.name}")   
+
+        if self.mode == ScanMode.BASIC:
                 exposure = self.exposure_analyzer.analyze(file_metadata)
 
                 result = ScanResult(
@@ -85,7 +92,7 @@ class Scanner:
                     risk_level=None
                 )
 
-            elif self.mode == ScanMode.DEEP:
+        elif self.mode == ScanMode.DEEP:
 
                 logger.debug(f"Reading file content: {file_metadata.name}")
                 file_content = self.storage.get_file_content(file_metadata)
@@ -107,12 +114,10 @@ class Scanner:
                     risk_level=risk
                 )
                 
-            else:
-                raise ValueError(f"Unsupported scan mode: {self.mode.value}")
+        else:
+            raise ValueError(f"Unsupported scan mode: {self.mode.value}")
 
-            logger.debug("Saving scan result to repository")
-            self.repository.save(result)
+        logger.debug("Saving scan result to repository")
+        self.repository.save(result)
 
-            yield result
-
-        logger.info("Scan completed")
+        return [result]

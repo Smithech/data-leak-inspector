@@ -4,6 +4,7 @@ CLI command definitions for Data Leak Inspector.
 
 import logging
 from pathlib import Path
+from rich.progress import Progress
 import typer
 from typing import NoReturn
 
@@ -58,28 +59,35 @@ def scan(
         dli scan --demo
         dli scan --demo --report report.json
     """
-
-    if verbose:
-        level = logging.DEBUG
-    elif quiet:
-        level = logging.WARNING
-    else:
-        level = logging.INFO
-
-    configure_logging(level)
-
-    if demo and gdrive:
-        _exit_with_error("Cannot use --demo and --gdrive together.")
-
     if demo:
         typer.echo("Scanning demo dataset...\n")
     elif gdrive:
         typer.echo("Scanning Google Drive...\n")
 
+    # -------------------------
+    # Logging
+    # -------------------------
+    if verbose:
+        level = logging.DEBUG
+    elif quiet:
+        level = logging.WARNING
+    else:
+        level = logging.WARNING
+
+    configure_logging(level)
+
+    # -------------------------
+    # Storage selection
+    # -------------------------
+    if demo and gdrive:
+        _exit_with_error("Cannot use --demo and --gdrive together.")
+
     storage = _select_storage(demo, gdrive)
-
+    
+    # -------------------------
+    # Services
+    # -------------------------
     pii_service = PIIDetectorService(load_detectors())
-
     evaluator = RiskEvaluator()
     repository = SQLiteScanRepository()
 
@@ -90,16 +98,45 @@ def scan(
         repository=repository,
     )
 
-    results = list(scanner.scan())
+    # -------------------------
+    # Scan with progress bar
+    # -------------------------
 
+    files = list(storage.list_files())
+
+    if not files:
+        typer.secho("No files found.", fg=typer.colors.YELLOW)
+        raise typer.Exit()
+
+    typer.echo()
+
+    results = []
+
+    with Progress() as progress:
+        task = progress.add_task("Scanning files...", total=len(files))
+
+        for file_metadata in files:
+            progress.update(
+                task,
+                description=f"Scanning {progress.tasks[0].completed + 1}/{len(files)}: "
+            )
+            results.extend(scanner.scan_file(file_metadata))
+            progress.advance(task)
+    
+    # -------------------------
+    # Results
+    # -------------------------
     if not results:
-        typer.echo("No new files to scan.")
+        typer.secho("No new files to scan.", fg=typer.colors.YELLOW)
         return
 
     typer.echo()
-    
+
     render_scan_results(results)
 
+    # -------------------------
+    # Reports 
+    # -------------------------
     if report:
         reporter = JsonReporter()
         reporter.generate(results, report)
