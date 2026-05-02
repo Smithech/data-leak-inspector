@@ -7,6 +7,7 @@ from datetime import datetime
 from leak_inspector.application.ports.scan_repository import ScanRepository
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
+from leak_inspector.domain.models import FileMetadata
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
 from leak_inspector.pii.detectors.email_detector import EmailDetector
@@ -23,8 +24,8 @@ class FakeScanRepository(ScanRepository):
         self.saved = []
         self.scanned = set()
 
-    def is_scanned(self, source: str, file_id: str, modified_time: datetime) -> bool:
-        return (source, file_id, modified_time) in self.scanned
+    def is_scanned(self, file_metadata: FileMetadata) -> bool:
+        return (file_metadata.source, file_metadata.id, file_metadata.modified_time) in self.scanned
 
     def save(self, result):
         self.saved.append(result)
