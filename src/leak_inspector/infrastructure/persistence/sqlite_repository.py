@@ -4,7 +4,6 @@ SQLite implementation of the scan repository.
 
 import json
 import sqlite3
-from datetime import datetime
 
 from leak_inspector.application.ports.scan_repository import ScanRepository
 from leak_inspector.domain.models import FileMetadata, ScanResult
@@ -48,8 +47,8 @@ class SQLiteScanRepository(ScanRepository):
         """
 
         params = {
-            "source": file_metadata.source, 
-            "file_id": file_metadata.id, 
+            "source": file_metadata.source,
+            "file_id": file_metadata.id,
             "modified_time": file_metadata.modified_time.isoformat(),
         }
 
@@ -59,8 +58,8 @@ class SQLiteScanRepository(ScanRepository):
 
     def save(self, result: ScanResult) -> None:
         pii_summary_json = (
-            json.dumps(result.pii_summary.model_dump(exclude_none=True)) 
-            if result.pii_summary 
+            json.dumps(result.pii_summary.model_dump(exclude_none=True))
+            if result.pii_summary
             else None
         )
 
@@ -87,9 +86,9 @@ class SQLiteScanRepository(ScanRepository):
                 result.modified_time.isoformat(),
                 result.mode,
                 result.exposure_level.value if result.exposure_level else None,
-                result.risk_level.value if result.risk_level else None,                
-                pii_summary_json    
-            )
+                result.risk_level.value if result.risk_level else None,
+                pii_summary_json,
+            ),
         )
 
         self.conn.commit()

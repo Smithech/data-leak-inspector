@@ -2,11 +2,8 @@
 CLI rendering utilities using Rich.
 """
 
-from collections import Counter
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
 import typer
+from rich.console import Console
 
 from leak_inspector.domain.enums import ScanMode
 from leak_inspector.domain.models import ScanResult
@@ -24,6 +21,7 @@ EXPOSURE_PRIORITY = {
     "shared": 1,
     "private": 2,
 }
+
 
 def _format_label(label: str, width: int = 7) -> str:
     return label.upper().ljust(width)
@@ -51,9 +49,11 @@ def _render_basic(results):
     results = sorted(
         results,
         key=lambda r: (
-            EXPOSURE_PRIORITY.get(r.exposure_level.value if r.exposure_level else "private", 99),
+            EXPOSURE_PRIORITY.get(
+                r.exposure_level.value if r.exposure_level else "private", 99
+            ),
             r.name or "",
-        )
+        ),
     )
 
     counts = {
@@ -92,7 +92,7 @@ def _render_deep(results):
         key=lambda r: (
             RISK_PRIORITY.get(r.risk_level.value if r.risk_level else "low", 99),
             r.name or "",
-        )
+        ),
     )
 
     counts = {
@@ -134,7 +134,7 @@ def render_scan_results(results: list[ScanResult]) -> None:
     """
     if not results:
         return
-    
+
     mode = results[0].mode
 
     if mode == ScanMode.BASIC:

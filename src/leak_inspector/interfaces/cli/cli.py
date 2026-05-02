@@ -4,18 +4,19 @@ CLI command definitions for Data Leak Inspector.
 
 import logging
 from pathlib import Path
-from rich.progress import Progress
-import typer
 from typing import NoReturn
+
+import typer
+from rich.progress import Progress
 
 from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
 from leak_inspector.domain.enums import ScanMode
+from leak_inspector.infrastructure.gdrive.client import GoogleDriveClient
 from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
 )
-from leak_inspector.infrastructure.gdrive.client import GoogleDriveClient
 from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.infrastructure.storage.gdrive_storage import GoogleDriveStorage
@@ -34,9 +35,15 @@ def auth():
 
 @app.command()
 def scan(
-    demo: bool = typer.Option(False, "--demo", help="Use bundled demo files instead of external storage."),
-    verbose: bool = typer.Option(False, "--verbose", help="Enable debug logging for detailed output."),
-    quiet: bool = typer.Option(False, "--quiet", help="Reduce logging output to warnings and errors only."),
+    demo: bool = typer.Option(
+        False, "--demo", help="Use bundled demo files instead of external storage."
+    ),
+    verbose: bool = typer.Option(
+        False, "--verbose", help="Enable debug logging for detailed output."
+    ),
+    quiet: bool = typer.Option(
+        False, "--quiet", help="Reduce logging output to warnings and errors only."
+    ),
     report: Path | None = typer.Option(
         None, "--report", help="Export scan results to a JSON report file."
     ),
@@ -49,7 +56,7 @@ def scan(
         ScanMode.BASIC,
         "--mode",
         help="Scan mode: basic (metadata) or deep (content analysis).",
-    )
+    ),
 ):
     """
     Scan files and detect sensitive information (PII).
@@ -83,7 +90,7 @@ def scan(
         _exit_with_error("Cannot use --demo and --gdrive together.")
 
     storage = _select_storage(demo, gdrive)
-    
+
     # -------------------------
     # Services
     # -------------------------
@@ -114,7 +121,7 @@ def scan(
         typer.secho("No files found.", fg=typer.colors.YELLOW)
         raise typer.Exit()
 
-    typer.echo() 
+    typer.echo()
 
     # -------------------------
     # Scanning files
@@ -128,11 +135,11 @@ def scan(
         for file_metadata in files:
             progress.update(
                 task,
-                description=f"Scanning {progress.tasks[0].completed + 1}/{len(files)}: "
+                description=f"Scanning {progress.tasks[0].completed + 1}/{len(files)}: ",
             )
             results.extend(scanner.scan_file(file_metadata))
             progress.advance(task)
-    
+
     # -------------------------
     # Results
     # -------------------------
@@ -145,7 +152,7 @@ def scan(
     render_scan_results(results)
 
     # -------------------------
-    # Reports 
+    # Reports
     # -------------------------
     if report:
         reporter = JsonReporter()

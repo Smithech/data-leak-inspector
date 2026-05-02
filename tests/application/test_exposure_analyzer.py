@@ -26,11 +26,7 @@ def test_private_file():
 
 
 def test_public_file():
-    metadata = make_metadata(
-        permissions=[
-            {"type": "anyone", "role": "reader"}
-        ]
-    )
+    metadata = make_metadata(permissions=[{"type": "anyone", "role": "reader"}])
 
     result = ExposureAnalyzer().analyze(metadata)
 
@@ -51,11 +47,7 @@ def test_shared_file_multiple_users():
 
 
 def test_shared_file_single_user():
-    metadata = make_metadata(
-        permissions=[
-            {"type": "user", "id": "a"}
-        ]
-    )
+    metadata = make_metadata(permissions=[{"type": "user", "id": "a"}])
 
     result = ExposureAnalyzer().analyze(metadata)
 

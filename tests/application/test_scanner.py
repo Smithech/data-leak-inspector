@@ -2,8 +2,6 @@
 Integration-style unit tests for the scanner.
 """
 
-from datetime import datetime
-
 from leak_inspector.application.ports.scan_repository import ScanRepository
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
@@ -25,7 +23,11 @@ class FakeScanRepository(ScanRepository):
         self.scanned = set()
 
     def is_scanned(self, file_metadata: FileMetadata) -> bool:
-        return (file_metadata.source, file_metadata.id, file_metadata.modified_time) in self.scanned
+        return (
+            file_metadata.source,
+            file_metadata.id,
+            file_metadata.modified_time,
+        ) in self.scanned
 
     def save(self, result):
         self.saved.append(result)
@@ -71,6 +73,7 @@ def test_scanner_returns_results():
 
     assert len(results) > 0
 
+
 '''
 def test_scanner_detects_high_risk_file():
     """
@@ -84,6 +87,7 @@ def test_scanner_detects_high_risk_file():
 
     assert len(high_risk_files) >= 1
 '''
+
 
 def test_scanner_skips_already_scanned_files():
     """

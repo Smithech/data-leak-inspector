@@ -2,8 +2,6 @@
 Fake Google Drive client for development and testing.
 """
 
-from datetime import datetime
-
 
 class FakeGoogleDriveClient:
     """

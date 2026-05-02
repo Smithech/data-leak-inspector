@@ -6,7 +6,6 @@ file scan results.
 """
 
 from abc import ABC, abstractmethod
-from datetime import datetime
 
 from leak_inspector.domain.models import FileMetadata, ScanResult
 

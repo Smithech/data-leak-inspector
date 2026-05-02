@@ -3,8 +3,7 @@ from typing import List, Optional
 
 from pydantic import BaseModel
 
-from .enums import ExposureLevel, ScanMode
-from .enums import RiskLevel
+from .enums import ExposureLevel, RiskLevel, ScanMode
 
 
 class FileMetadata(BaseModel):
@@ -59,7 +58,6 @@ class ScanResult(BaseModel):
     # DEEP mode
     pii_summary: PIISummary | None = None
     risk_level: RiskLevel | None = None
-    
 
 
 class FileExposure(BaseModel):

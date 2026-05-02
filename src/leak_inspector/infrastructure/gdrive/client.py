@@ -1,12 +1,9 @@
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
-import os
-import json
-
 
 SCOPES = ["https://www.googleapis.com/auth/drive.metadata.readonly"]
 

@@ -12,9 +12,9 @@ and produces scan results.
 import logging
 from typing import Iterable
 
+from leak_inspector.application.exposure_analyzer import ExposureAnalyzer
 from leak_inspector.application.ports.scan_repository import ScanRepository
 from leak_inspector.application.ports.storage import Storage
-from leak_inspector.application.exposure_analyzer import ExposureAnalyzer
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.domain.enums import ScanMode
 from leak_inspector.domain.models import ScanResult
@@ -65,55 +65,52 @@ class Scanner:
             )
             yield from self.scan_file(file_metadata)
 
-            
-
         logger.info("Scan completed")
-    
+
     def scan_file(self, file_metadata):
         if self.repository.is_scanned(file_metadata):
             logger.info(f"Skipping already scanned file: {file_metadata.name}")
-            
+
             return []
 
-        logger.info(f"Scanning file: {file_metadata.name}")   
+        logger.info(f"Scanning file: {file_metadata.name}")
 
         if self.mode == ScanMode.BASIC:
-                exposure = self.exposure_analyzer.analyze(file_metadata)
+            exposure = self.exposure_analyzer.analyze(file_metadata)
 
-                result = ScanResult(
-                    file_id=file_metadata.id,
-                    name=file_metadata.name,
-                    source=file_metadata.source,
-                    modified_time=file_metadata.modified_time,
-                    mode=ScanMode.BASIC,
-                    exposure_level=exposure.level,
-                    exposure_reason=exposure.reason,
-                    pii_summary=None,
-                    risk_level=None
-                )
+            result = ScanResult(
+                file_id=file_metadata.id,
+                name=file_metadata.name,
+                source=file_metadata.source,
+                modified_time=file_metadata.modified_time,
+                mode=ScanMode.BASIC,
+                exposure_level=exposure.level,
+                exposure_reason=exposure.reason,
+                pii_summary=None,
+                risk_level=None,
+            )
 
         elif self.mode == ScanMode.DEEP:
+            logger.debug(f"Reading file content: {file_metadata.name}")
+            file_content = self.storage.get_file_content(file_metadata)
 
-                logger.debug(f"Reading file content: {file_metadata.name}")
-                file_content = self.storage.get_file_content(file_metadata)
+            logger.debug("Running PII detection")
+            summary = self.pii_detector.analyze(file_content.content)
 
-                logger.debug("Running PII detection")
-                summary = self.pii_detector.analyze(file_content.content)
+            logger.debug("Evaluating risk level")
+            risk = self.risk_evaluator.evaluate(summary)
 
-                logger.debug("Evaluating risk level")
-                risk = self.risk_evaluator.evaluate(summary)
-                
-                result = ScanResult(
-                    file_id=file_metadata.id,
-                    name=file_metadata.name,
-                    source=file_metadata.source,
-                    modified_time=file_metadata.modified_time,
-                    mode=ScanMode.BASIC,
-                    exposure_level=None,
-                    pii_summary=summary,
-                    risk_level=risk
-                )
-                
+            result = ScanResult(
+                file_id=file_metadata.id,
+                name=file_metadata.name,
+                source=file_metadata.source,
+                modified_time=file_metadata.modified_time,
+                mode=ScanMode.BASIC,
+                exposure_level=None,
+                pii_summary=summary,
+                risk_level=risk,
+            )
+
         else:
             raise ValueError(f"Unsupported scan mode: {self.mode.value}")
 

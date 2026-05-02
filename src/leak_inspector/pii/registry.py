@@ -7,11 +7,8 @@ import inspect
 import pkgutil
 from typing import List, Type
 
-from leak_inspector.pii.base import BaseDetector
 import leak_inspector.pii.detectors as detectors_pkg
-from leak_inspector.pii.detectors.email_detector import EmailDetector
-from leak_inspector.pii.detectors.phone_detector import PhoneDetector
-from leak_inspector.pii.detectors.credit_card_detector import CreditCardDetector
+from leak_inspector.pii.base import BaseDetector
 
 
 def _discover_detector_classes() -> List[Type[BaseDetector]]:
