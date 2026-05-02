@@ -99,16 +99,26 @@ def scan(
     )
 
     # -------------------------
-    # Scan with progress bar
+    # Fetching files
     # -------------------------
+    files = []
 
-    files = list(storage.list_files())
+    with Progress() as progress:
+        task = progress.add_task("Fetching files...", total=None)
+
+        for file in storage.list_files():
+            files.append(file)
+            progress.advance(task)
 
     if not files:
         typer.secho("No files found.", fg=typer.colors.YELLOW)
         raise typer.Exit()
 
-    typer.echo()
+    typer.echo() 
+
+    # -------------------------
+    # Scanning files
+    # -------------------------
 
     results = []
 
