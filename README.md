@@ -159,9 +159,9 @@ leak_inspector/
 
 ## ⚠️ Limitations (v0.1)
 
-❌ No content scanning (PII detection)
-❌ No Google Docs content parsing
-❌ Heuristic-based risk (metadata only)
+- ❌ No content scanning (PII detection)
+- ❌ No Google Docs content parsing
+- ❌ Heuristic-based risk (metadata only)
 
 
 ## 🛣 Roadmap
@@ -176,10 +176,10 @@ leak_inspector/
 
 DLI is designed to:
 
-✔ Minimize permissions
-✔ Respect user privacy
-✔ Deliver fast insights
-✔ Be transparent in analysis
+- ✔ Minimize permissions
+- ✔ Respect user privacy
+- ✔ Deliver fast insights
+- ✔ Be transparent in analysis
 
 
 ## 🤝 Contributing
