@@ -15,7 +15,7 @@ bump-version:
 		exit 1; \
 	fi
 	@echo "🔖 Bumping version to $(VERSION)"
-	sed -i 's/__version__ = .*/__version__ = "$(VERSION)"/' src/$(PACKAGE)/__init__.py
+	sed -i '' 's/__version__ = .*/__version__ = "$(VERSION)"/' src/$(PACKAGE)/__init__.py
 
 check-clean:
 	@if [ -n "$$(git status --porcelain)" ]; then \
