@@ -30,41 +30,6 @@ jobs:
       - name: Run tests
         run: pytest
 
-      - name: Set package name
-        run: echo "PACKAGE=leak_inspector" >> $GITHUB_ENV 
-
-      - name: Get version from __init__.py
-        id: version
-        run: |
-          # Verificar que el directorio 'src' esté en PYTHONPATH
-          export PYTHONPATH=src:$PYTHONPATH
-
-          # Obtener la versión base desde __init__.py
-          VERSION=$(python -c "from ${PACKAGE} import __version__; print(__version__)")
-          echo "Current version in __init__.py: ${VERSION}"
-
-          # Consultar la última versión publicada en TestPyPI
-          LAST_PUBLISHED_VERSION=$(twine search ${PACKAGE} --repository testpypi | grep -oP '\d+\.\d+\.\d+\.dev\d+' | sort -V | tail -n 1)
-
-          if [ -z "$LAST_PUBLISHED_VERSION" ]; then
-            # Si no hay versiones publicadas, empezar con .dev1
-            NEXT_VERSION="${VERSION}.dev1"
-          else
-            # Si ya hay versiones publicadas, incrementar el sufijo .devX
-            LAST_VERSION_BASE=$(echo $LAST_PUBLISHED_VERSION | sed 's/\(.*\)\.dev[0-9]\+/\1/')
-            if [ "$LAST_VERSION_BASE" == "$VERSION" ]; then
-              # Si la versión base es la misma, incrementar el número de versión
-              NEXT_DEV_NUMBER=$(echo $LAST_PUBLISHED_VERSION | sed 's/.*\.dev\([0-9]\+\)/\1/' | awk '{print $1+1}')
-              NEXT_VERSION="${VERSION}.dev${NEXT_DEV_NUMBER}"
-            else
-              # Si la versión base cambia (por ejemplo, 0.1.0 -> 0.1.1), reiniciar a .dev1
-              NEXT_VERSION="${VERSION}.dev1"
-            fi
-          fi
-
-          echo "Generated version: ${NEXT_VERSION}"
-          echo "::set-output name=version::${NEXT_VERSION}"
-
       - name: Build package
         run: python -m build
 
