@@ -9,6 +9,8 @@ jobs:
   build-and-publish-test:
     runs-on: ubuntu-latest
 
+    environment: testpypi
+
     permissions:
       id-token: write
       contents: read
