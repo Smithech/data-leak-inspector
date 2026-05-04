@@ -37,7 +37,4 @@ jobs:
         run: twine check dist/*
 
       - name: Publish to PyPI
-        run: twine upload --skip-existing dist/*
-        env:
-          TWINE_USERNAME: __token__
-          TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
+        uses: pypa/gh-action-pypi-publish@release/v1

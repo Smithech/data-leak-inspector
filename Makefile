@@ -13,14 +13,8 @@ endif
 # 🧪 TEST RELEASE (TestPyPI)
 # -------------------------
 test-release:
-	@BASE=$$(python -c "import re; print(re.search(r'version = \"(.*)\"', open('pyproject.toml').read()).group(1))"); \
-	COUNT=$$(git tag -l "$${BASE}.dev*" | wc -l | tr -d ' '); \
-	DEV_VERSION="$${BASE}.dev$$(($$COUNT + 1))"; \
-	echo "🧪 TestPyPI version: $$DEV_VERSION"; \
-	$(SED_CMD) "s/version = .*/version = \"$$DEV_VERSION\"/" pyproject.toml; \
-	python -m build; \
-	twine upload --repository testpypi --skip-existing dist/*; \
-	git checkout pyproject.toml
+	@echo "🧪 Generando versión TestPyPI..."
+	python3 -m build
 
 # -------------------------
 # 🚀 RELEASE FINAL (PyPI)
