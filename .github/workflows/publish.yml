@@ -1,38 +1,43 @@
-name: Publish to PyPI
+name: Publish Python Package
 
 on:
   push:
     tags:
-      - "v*"
+      - 'v*'  # Se activa solo cuando se hace push de tags que comiencen con "v"
 
 jobs:
-  release:
+  build-and-publish:
     runs-on: ubuntu-latest
-    environment:
-      name: pypi
-      url: https://pypi.org/project/data-leak-inspector/
-    permissions:
-      id-token: write  
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: 3.11
+          python-version: "3.11"  # Ajusta la versión mínima que necesites
+          cache: "pip"
 
-      - name: Install dependencies
+      - name: Install build and dev dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install .[dev]
+          # Instalamos las dependencias de desarrollo definidas en pyproject.toml
+          pip install ".[dev]"
 
-      - name: Run tests
-        run: pytest --cov=src --cov-report=xml
+      - name: Lint & Test
+        run: |
+          # Ruff para linting
+          ruff src tests
+          # Pytest para tests
+          pytest --cov=src tests
 
-      - name: Build package
-        run: python -m build
+      - name: Build distribution
+        run: |
+          python -m build --sdist --wheel --outdir dist
 
       - name: Publish to PyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        # No username/password required; Trusted Publishing usará OIDC
+        uses: pypa/gh-action-pypi-publish@v1.5.0
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
