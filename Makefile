@@ -15,7 +15,7 @@ ifndef VERSION
 endif
 	@echo "Actualizando versión a $(VERSION) en $(PYPROJECT)..."
 	# Actualiza la versión en pyproject.toml
-	sed -i'' -e 's/^version = .*/version = "$(VERSION)"/' $(PYPROJECT)
+	sed -i '' -e 's/^version = .*/version = "$(VERSION)"/' $(PYPROJECT)
 	# Git commit
 	git add $(PYPROJECT)
 	git commit -m "Bump version to $(VERSION)"
