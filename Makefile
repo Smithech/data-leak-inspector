@@ -18,7 +18,7 @@ endif
 	sed -i '' -E 's/^[[:space:]]*version = .*/version = "$(VERSION)"/' pyproject.toml
 	# Git commit
 	git add $(PYPROJECT)
-	git commit -m "Bump version to $(VERSION)"
+	git commit -m "Bump version to $(VERSION)" || echo "No changes to commit"
 	# Crear tag
 	git tag v$(VERSION)
 	# Push commit y tag
