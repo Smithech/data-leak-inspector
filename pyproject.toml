@@ -29,6 +29,7 @@ dev = [
     "pytest>=9.0.3",
     "pytest-cov>=7.1.0",
     "ruff>=0.15.11",
+    "tomli>=2.4.1",
     "twine>=6.2.0",
 ]
 

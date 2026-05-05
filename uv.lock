@@ -445,7 +445,7 @@ wheels = [
 
 [[package]]
 name = "data-leak-inspector"
-version = "0.1.0"
+version = "0.1.0.dev1"
 source = { editable = "." }
 dependencies = [
     { name = "google-api-python-client" },
@@ -463,6 +463,7 @@ dev = [
     { name = "pytest" },
     { name = "pytest-cov" },
     { name = "ruff" },
+    { name = "tomli" },
     { name = "twine" },
 ]
 
@@ -483,6 +484,7 @@ dev = [
     { name = "pytest", specifier = ">=9.0.3" },
     { name = "pytest-cov", specifier = ">=7.1.0" },
     { name = "ruff", specifier = ">=0.15.11" },
+    { name = "tomli", specifier = ">=2.4.1" },
     { name = "twine", specifier = ">=6.2.0" },
 ]
 
