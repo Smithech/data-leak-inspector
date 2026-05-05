@@ -3,12 +3,7 @@ PYPROJECT_FILE := pyproject.toml
 INIT_FILE := src/leak_inspector/__init__.py
 
 # Leer versión base del pyproject.toml
-PYPROJECT_VERSION := $(shell python - <<EOF
-import tomli
-with open("$(PYPROJECT_FILE)", "rb") as f:
-    print(tomli.load(f)["project"]["version"])
-EOF
-)
+PYPROJECT_VERSION := $(shell python3 get_version.py)
 
 .PHONY: testpypi pypi
 
