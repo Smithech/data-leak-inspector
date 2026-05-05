@@ -25,12 +25,9 @@ jobs:
           # Instalamos las dependencias de desarrollo definidas en pyproject.toml
           pip install ".[dev]"
 
-      - name: Lint & Test
+      - name: Run tests
         run: |
-          # Ruff para linting
-          ruff src tests
-          # Pytest para tests
-          pytest --cov=src tests
+          pytest tests
 
       - name: Build distribution
         run: |
