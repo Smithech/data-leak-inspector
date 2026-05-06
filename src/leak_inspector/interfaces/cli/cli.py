@@ -12,7 +12,9 @@ from rich.progress import Progress
 from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
+from leak_inspector.config.settings import load_settings
 from leak_inspector.domain.enums import ScanMode
+from leak_inspector.infrastructure.gdrive.auth import load_credentials
 from leak_inspector.infrastructure.gdrive.client import GoogleDriveClient
 from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
@@ -27,6 +29,7 @@ from leak_inspector.pii.service import PIIDetectorService
 
 app = typer.Typer(help="Data Leak Inspector CLI")
 
+settings = load_settings()
 
 @app.command()
 def auth():
@@ -178,12 +181,11 @@ def _select_storage(demo: bool, gdrive: bool) -> Storage:
         return DemoStorage()
 
     if gdrive:
-        base = Path("~/Documents/dli").expanduser()
+        if not settings.google_token_path.exists():
+            _exit_with_error("Not authenticated. Run `dli auth`.")
 
-        client = GoogleDriveClient(
-            credentials_path=base / "credentials.json",
-            token_path=base / "token.json",
-        )
+        creds = load_credentials(settings.google_token_path)
+        client = GoogleDriveClient(creds)
 
         return GoogleDriveStorage(client)
 
