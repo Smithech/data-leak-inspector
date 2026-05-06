@@ -31,6 +31,69 @@ app = typer.Typer(help="Data Leak Inspector CLI")
 
 settings = load_settings()
 
+
+@app.command()
+def init():
+    """
+    Initialize DLI configuration and create default config file.
+    """
+    from leak_inspector.config.settings import AppPaths, default_settings
+    import toml
+
+    paths = AppPaths()
+
+    # -------------------------
+    # Create directories
+    # -------------------------
+    paths.config_dir.mkdir(parents=True, exist_ok=True)
+    paths.data_dir.mkdir(parents=True, exist_ok=True)
+
+    typer.echo("📁 Directories:")
+    typer.echo(f"  Config: {paths.config_dir}")
+    typer.echo(f"  Data:   {paths.data_dir}")
+
+    # -------------------------
+    # Create config.toml if not exists
+    # -------------------------
+    if not paths.config_file.exists():
+        config_data = default_settings(paths)
+
+        with open(paths.config_file, "w") as f:
+            toml.dump(config_data, f)
+
+        typer.secho("\n✅ config.toml created", fg=typer.colors.GREEN)
+    else:
+        typer.secho("\n⚠ config.toml already exists", fg=typer.colors.YELLOW)
+
+    typer.echo(f"  Path: {paths.config_file}")
+
+    # -------------------------
+    # Create reports dir (nice UX)
+    # -------------------------
+    reports_dir = paths.data_dir / "reports"
+    reports_dir.mkdir(parents=True, exist_ok=True)
+
+    # -------------------------
+    # Google setup guide
+    # -------------------------
+    typer.echo("\n🔐 Google Drive setup:")
+    typer.echo("1. Go to https://console.cloud.google.com/")
+    typer.echo("2. Create a project")
+    typer.echo("3. Enable Google Drive API")
+    typer.echo("4. Create OAuth Client ID (Desktop App)")
+    typer.echo("5. Download credentials.json")
+
+    typer.echo("\n📌 Place credentials.json here:")
+    typer.secho(f"  {paths.credentials_path}", fg=typer.colors.CYAN)
+
+    # -------------------------
+    # Next steps
+    # -------------------------
+    typer.echo("\n🚀 Next steps:")
+    typer.echo("  dli auth")
+    typer.echo("  dli scan --gdrive")
+
+
 @app.command()
 def auth():
     pass
