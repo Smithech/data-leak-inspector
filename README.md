@@ -1,5 +1,14 @@
 # Data Leak Inspector
 
+ # data-leak-inspector
+
+![Tests](https://github.com/Smithech/data-leak-inspector/actions/workflows/publish.yml/badge.svg)
+[![PyPI](https://img.shields.io/pypi/v/data-leak-inspector.svg)](https://pypi.org/project/data-leak-inspector/)
+[![Python](https://img.shields.io/pypi/pyversions/data-leak-inspector.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+![Ruff](https://img.shields.io/badge/code%20style-ruff-brightgreen)
+
+
 > Find sensitive data. Fix risky permissions.
 
 **Data Leak Inspector** is a CLI tool that helps you identify potentially exposed files in your storage systems — starting with Google Drive.
@@ -7,7 +16,7 @@
 Instead of scanning file contents, DLI analyzes **metadata and permissions** to quickly highlight files that may be publicly accessible or shared.
 
 
-## 🚀 Features (v0.1)
+## 🚀 Features
 
 - 🔍 Metadata-based scanning (no file content access)
 - ☁️ Google Drive integration
@@ -19,12 +28,11 @@ Instead of scanning file contents, DLI analyzes **metadata and permissions** to 
 - 💬 Human-readable explanations
 - 📊 Clean CLI output with summaries
 - ⚡ Progress bar during scanning
-- 🧪 Demo dataset for quick testing
 
 
 ## 🧠 How It Works
 
-DLI does not read file contents.
+`DLI` does not read file contents.
 
 Instead, it analyzes:
 
@@ -66,16 +74,11 @@ Summary:
 
 ## ⚙️ Installation
 ``` Bash
-git clone https://github.com/yourusername/data-leak-inspector.git
-cd data-leak-inspector
-
-
-pip install -e .
-```
-
+pip install data-leak-inspector
+``` 
 
 ## 🧪 Run with Demo Data
-``` BBash
+``` Bash
 dli scan --demo
 ```
 
@@ -157,19 +160,20 @@ leak_inspector/
 | PRIVATE | Only accessible by owner                  |
 
 
-## ⚠️ Limitations (v0.1)
+## 📜 Changelog
 
-- ❌ No content scanning (PII detection)
-- ❌ No Google Docs content parsing
-- ❌ Heuristic-based risk (metadata only)
+All notable changes to this project are documented in the CHANGELOG.md file.
 
+We follow the conventions defined by Keep a Changelog and adhere to Semantic Versioning. Each release includes categorized changes such as:
 
-## 🛣 Roadmap
+- **Added** for new features
+- **Changed** for updates to existing behavior
+- **Fixed** for bug fixes
+- **Security** for vulnerability patches
 
-### v0.1 (current)
-- Metadata scanning
-- Google Drive integration
-- Exposure detection
+An **Unreleased** section is also maintained to track upcoming changes before they are officially released.
+
+When upgrading, we recommend reviewing the changelog to understand new features, bug fixes, and any potential breaking changes.
 
 
 ## 🧠 Philosophy
@@ -180,12 +184,3 @@ DLI is designed to:
 - ✔ Respect user privacy
 - ✔ Deliver fast insights
 - ✔ Be transparent in analysis
-
-
-## 🤝 Contributing
-
-Contributions are welcome.
-
-1. Fork the repo
-2. Create a branch
-3. Submit a PR
