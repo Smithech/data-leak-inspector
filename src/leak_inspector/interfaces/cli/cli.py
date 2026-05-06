@@ -96,7 +96,29 @@ def init():
 
 @app.command()
 def auth():
-    pass
+    """
+    Authenticate with Google and store credentials.
+    """
+    from leak_inspector.config.settings import load_settings
+    from leak_inspector.infrastructure.gdrive.auth import authenticate
+
+    settings = load_settings()
+
+    if not settings.google_credentials_path.exists():
+        typer.secho(
+            "credentials.json not found. Run `dli init` first.",
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(code=1)
+
+    typer.echo("Opening browser for authentication...")
+
+    authenticate(
+        settings.google_credentials_path,
+        settings.google_token_path,
+    )
+
+    typer.secho("Authentication successful!", fg=typer.colors.GREEN)
 
 
 @app.command()
