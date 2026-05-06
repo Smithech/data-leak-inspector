@@ -249,6 +249,22 @@ def scan(
 
 
 @app.command()
+def logout():
+    """
+    Remove stored credentials.
+    """
+    from leak_inspector.config.settings import load_settings
+
+    settings = load_settings()
+
+    if settings.google_token_path.exists():
+        settings.google_token_path.unlink()
+        typer.secho("Logged out successfully.", fg=typer.colors.GREEN)
+    else:
+        typer.secho("No active session found.", fg=typer.colors.YELLOW)
+
+
+@app.command()
 def report():
     pass
 
