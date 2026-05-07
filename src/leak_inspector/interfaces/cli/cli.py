@@ -36,7 +36,7 @@ settings = load_settings()
 def init():
     """
     Initialize DLI configuration and create default config file.
-    """
+    """'''
     from leak_inspector.config.settings import AppPaths, default_settings
     import toml
 
@@ -91,7 +91,109 @@ def init():
     # -------------------------
     typer.echo("\n🚀 Next steps:")
     typer.echo("  dli auth")
-    typer.echo("  dli scan --gdrive")
+    typer.echo("  dli scan --gdrive") 
+    '''
+
+    import toml
+
+    from leak_inspector.config.settings import (
+        AppPaths,
+        default_settings,
+    )
+    #from leak_inspector.interfaces.cli.banner import render_banner
+
+    #render_banner()
+
+    paths = AppPaths()
+
+    # -------------------------
+    # Directories
+    # -------------------------
+    typer.echo("Creating directories...\n")
+
+    paths.config_dir.mkdir(parents=True, exist_ok=True)
+    paths.data_dir.mkdir(parents=True, exist_ok=True)
+
+    typer.secho(
+        f"✓ Config: {paths.config_dir}",
+        fg=typer.colors.GREEN,
+    )
+
+    typer.secho(
+        f"✓ Data:   {paths.data_dir}",
+        fg=typer.colors.GREEN,
+    )
+
+    # -------------------------
+    # Config
+    # -------------------------
+    if not paths.config_file.exists():
+        with open(paths.config_file, "w") as f:
+            toml.dump(default_settings(paths), f)
+
+        typer.secho(
+            "\n✓ config.toml created",
+            fg=typer.colors.GREEN,
+        )
+    else:
+        typer.secho(
+            "\n✓ config.toml already exists",
+            fg=typer.colors.YELLOW,
+        )
+
+    typer.echo(f"  {paths.config_file}")
+
+    # -------------------------
+    # Credentials
+    # -------------------------
+    typer.echo("\nGoogle Drive setup\n")
+
+    if paths.credentials_path.exists():
+        typer.secho(
+            "✓ credentials.json detected",
+            fg=typer.colors.GREEN,
+        )
+    else:
+        typer.secho(
+            "! credentials.json not found",
+            fg=typer.colors.YELLOW,
+        )
+
+        typer.echo("\nSteps:")
+        typer.echo("  1. Open https://console.cloud.google.com/")
+        typer.echo("  2. Create a project")
+        typer.echo("  3. Enable Google Drive API")
+        typer.echo("  4. Create OAuth Client ID")
+        typer.echo("  5. Select Desktop App")
+        typer.echo("  6. Download credentials.json")
+
+        typer.echo("\nPlace credentials.json here:")
+        typer.secho(
+            f"{paths.credentials_path}",
+            fg=typer.colors.CYAN,
+        )
+
+    # -------------------------
+    # Auth
+    # -------------------------
+    typer.echo("\nAuthentication\n")
+
+    if paths.token_path.exists():
+        typer.secho(
+            "✓ Existing session detected",
+            fg=typer.colors.GREEN,
+        )
+    else:
+        typer.secho(
+            "! No active session",
+            fg=typer.colors.YELLOW,
+        )
+
+        typer.echo("\nRun:")
+        typer.secho(
+            "  dli auth",
+            fg=typer.colors.CYAN,
+        )
 
 
 @app.command()
