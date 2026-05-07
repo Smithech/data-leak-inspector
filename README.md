@@ -1,7 +1,5 @@
 # Data Leak Inspector
 
- # data-leak-inspector
-
 ![Tests](https://github.com/Smithech/data-leak-inspector/actions/workflows/publish.yml/badge.svg)
 [![PyPI](https://img.shields.io/pypi/v/data-leak-inspector.svg)](https://pypi.org/project/data-leak-inspector/)
 [![Python](https://img.shields.io/pypi/pyversions/data-leak-inspector.svg)](https://www.python.org/)

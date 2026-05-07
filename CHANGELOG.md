@@ -8,9 +8,25 @@ and this project adheres to Semantic Versioning.
 ## [Unreleased]
 
 ### Added
-- `init` command (not yet implemented)
-- `auth` command (not yet implemented)
-- `logout` command (not yet implemented)
+- 
+
+### Changed
+- 
+
+### Fixed
+- 
+
+### ⚠️ Breaking Changes
+- 
+
+
+## [0.2.0] - 2026-05-
+
+### Added
+- `init` command to
+- `auth` command to
+- `logout` command to
+- escaneo filtro por extensiones (configurable file extension filtering for Google Drive scans)
 
 ### Changed
 - The application now uses the operating system's standard configuration directory (XDG on Linux/macOS, AppData on Windows)
@@ -29,7 +45,6 @@ and this project adheres to Semantic Versioning.
 ### Added
 - Initial release of the `dli` CLI
 - `scan` command to analyze file permissions in Google Drive
-
 - `--gdrive` flag to use Google Drive as a storage backend (mock implementation)
 - `--mode` flag with `basic` (metadata) and `deep` (content analysis) options
 - `--verbose` flag for debug-level logging
