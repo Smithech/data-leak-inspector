@@ -4,6 +4,7 @@ CLI command definitions for Data Leak Inspector.
 
 import logging
 from pathlib import Path
+import toml
 from typing import NoReturn
 
 import typer
@@ -12,7 +13,14 @@ from rich.progress import Progress
 from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
+from leak_inspector.config.settings import (
+    AppPaths,
+    default_settings,
+    load_settings, 
+    Settings
+)
 from leak_inspector.domain.enums import ScanMode
+from leak_inspector.infrastructure.gdrive.auth import load_credentials
 from leak_inspector.infrastructure.gdrive.client import GoogleDriveClient
 from leak_inspector.infrastructure.persistence.sqlite_repository import (
     SQLiteScanRepository,
@@ -20,6 +28,7 @@ from leak_inspector.infrastructure.persistence.sqlite_repository import (
 from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.infrastructure.storage.gdrive_storage import GoogleDriveStorage
+from leak_inspector.interfaces.cli.banner import render_banner
 from leak_inspector.interfaces.cli.render import render_scan_results
 from leak_inspector.logging.config import configure_logging
 from leak_inspector.pii.registry import load_detectors
@@ -27,10 +36,132 @@ from leak_inspector.pii.service import PIIDetectorService
 
 app = typer.Typer(help="Data Leak Inspector CLI")
 
+settings = load_settings()
+
+
+@app.command()
+def init():
+    """
+    Initialize DLI configuration and create default config file.
+    """
+    render_banner()
+
+    paths = AppPaths()
+
+    # -------------------------
+    # Directories
+    # -------------------------
+    typer.echo("Creating directories...\n")
+
+    paths.config_dir.mkdir(parents=True, exist_ok=True)
+    paths.data_dir.mkdir(parents=True, exist_ok=True)
+
+    typer.secho(
+        f"✓ Config: {paths.config_dir}",
+        fg=typer.colors.GREEN,
+    )
+
+    typer.secho(
+        f"✓ Data:   {paths.data_dir}",
+        fg=typer.colors.GREEN,
+    )
+
+    # -------------------------
+    # Config
+    # -------------------------
+    if not paths.config_file.exists():
+        with open(paths.config_file, "w") as f:
+            toml.dump(default_settings(paths), f)
+
+        typer.secho(
+            "\n✓ config.toml created",
+            fg=typer.colors.GREEN,
+        )
+    else:
+        typer.secho(
+            "\n✓ config.toml already exists",
+            fg=typer.colors.YELLOW,
+        )
+
+    typer.echo(f"  {paths.config_file}")
+
+    # -------------------------
+    # Credentials
+    # -------------------------
+    typer.echo("\nGoogle Drive setup\n")
+
+    if paths.credentials_path.exists():
+        typer.secho(
+            "✓ credentials.json detected",
+            fg=typer.colors.GREEN,
+        )
+    else:
+        typer.secho(
+            "! credentials.json not found",
+            fg=typer.colors.YELLOW,
+        )
+
+        typer.echo("\nSteps:")
+        typer.echo("  1. Open https://console.cloud.google.com/")
+        typer.echo("  2. Create a project")
+        typer.echo("  3. Enable Google Drive API")
+        typer.echo("  4. Create OAuth Client ID")
+        typer.echo("  5. Select Desktop App")
+        typer.echo("  6. Download credentials.json")
+
+        typer.echo("\nPlace credentials.json here:")
+        typer.secho(
+            f"{paths.credentials_path}",
+            fg=typer.colors.CYAN,
+        )
+
+    # -------------------------
+    # Auth
+    # -------------------------
+    typer.echo("\nAuthentication\n")
+
+    if paths.token_path.exists():
+        typer.secho(
+            "✓ Existing session detected",
+            fg=typer.colors.GREEN,
+        )
+    else:
+        typer.secho(
+            "! No active session",
+            fg=typer.colors.YELLOW,
+        )
+
+        typer.echo("\nRun:")
+        typer.secho(
+            "  dli auth",
+            fg=typer.colors.CYAN,
+        )
+
 
 @app.command()
 def auth():
-    pass
+    """
+    Authenticate with Google and store credentials.
+    """
+    from leak_inspector.infrastructure.gdrive.auth import authenticate
+
+    render_banner()
+
+    if not settings.google_credentials_path.exists():
+        typer.secho(
+            "credentials.json not found. Run `dli init` first.",
+            fg=typer.colors.RED,
+        )
+        raise typer.Exit(code=1)
+
+    typer.echo("Opening browser for authentication...")
+
+    authenticate(
+        settings.google_credentials_path,
+        settings.google_token_path,
+    )
+
+    typer.secho("Authentication successful!", fg=typer.colors.GREEN)
 
 
 @app.command()
@@ -66,6 +197,8 @@ def scan(
         dli scan --demo
         dli scan --demo --report report.json
     """
+    render_banner()
+    
     if demo:
         typer.echo("Scanning demo dataset...\n")
     elif gdrive:
@@ -89,14 +222,14 @@ def scan(
     if demo and gdrive:
         _exit_with_error("Cannot use --demo and --gdrive together.")
 
-    storage = _select_storage(demo, gdrive)
+    storage = _select_storage(demo=demo, gdrive=gdrive, settings=settings)
 
     # -------------------------
     # Services
     # -------------------------
     pii_service = PIIDetectorService(load_detectors())
     evaluator = RiskEvaluator()
-    repository = SQLiteScanRepository()
+    repository = SQLiteScanRepository(db_path=settings.database_path)
 
     scanner = Scanner(
         storage=storage,
@@ -161,6 +294,18 @@ def scan(
 
 
 @app.command()
+def logout():
+    """
+    Remove stored credentials.
+    """
+    if settings.google_token_path.exists():
+        settings.google_token_path.unlink()
+        typer.secho("Logged out successfully.", fg=typer.colors.GREEN)
+    else:
+        typer.secho("No active session found.", fg=typer.colors.YELLOW)
+
+
+@app.command()
 def report():
     pass
 
@@ -173,18 +318,24 @@ def _exit_with_error(message: str) -> NoReturn:
     raise typer.Exit(code=1)
 
 
-def _select_storage(demo: bool, gdrive: bool) -> Storage:
+def _select_storage(
+        demo: bool, 
+        gdrive: bool,
+        settings: Settings
+) -> Storage:
     if demo:
         return DemoStorage()
 
     if gdrive:
-        base = Path("~/Documents/dli").expanduser()
+        if not settings.google_token_path.exists():
+            _exit_with_error("Not authenticated. Run `dli auth`.")
 
-        client = GoogleDriveClient(
-            credentials_path=base / "credentials.json",
-            token_path=base / "token.json",
+        creds = load_credentials(settings.google_token_path)
+        client = GoogleDriveClient(creds)
+
+        return GoogleDriveStorage(
+            client=client,
+            allowed_extensions=settings.allowed_extensions
         )
-
-        return GoogleDriveStorage(client)
 
     _exit_with_error("No storage selected. Use --demo or --gdrive.")

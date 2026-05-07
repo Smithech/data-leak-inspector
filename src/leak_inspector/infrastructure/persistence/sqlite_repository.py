@@ -3,6 +3,7 @@ SQLite implementation of the scan repository.
 """
 
 import json
+from pathlib import Path
 import sqlite3
 
 from leak_inspector.application.ports.scan_repository import ScanRepository
@@ -14,8 +15,8 @@ class SQLiteScanRepository(ScanRepository):
     SQLite-based repository for storing scan results.
     """
 
-    def __init__(self, db_path: str = "dli.db"):
-        self.conn = sqlite3.connect(db_path)
+    def __init__(self, db_path: Path):
+        self.conn = sqlite3.connect(str(db_path))
         self._create_table()
 
     def _create_table(self):
