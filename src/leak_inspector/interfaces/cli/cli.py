@@ -12,7 +12,7 @@ from rich.progress import Progress
 from leak_inspector.application.ports.storage import Storage
 from leak_inspector.application.risk_evaluator import RiskEvaluator
 from leak_inspector.application.scanner import Scanner
-from leak_inspector.config.settings import load_settings
+from leak_inspector.config.settings import load_settings, Settings
 from leak_inspector.domain.enums import ScanMode
 from leak_inspector.infrastructure.gdrive.auth import load_credentials
 from leak_inspector.infrastructure.gdrive.client import GoogleDriveClient
@@ -177,14 +177,14 @@ def scan(
     if demo and gdrive:
         _exit_with_error("Cannot use --demo and --gdrive together.")
 
-    storage = _select_storage(demo, gdrive)
+    storage = _select_storage(demo=demo, gdrive=gdrive, settings=settings)
 
     # -------------------------
     # Services
     # -------------------------
     pii_service = PIIDetectorService(load_detectors())
     evaluator = RiskEvaluator()
-    repository = SQLiteScanRepository()
+    repository = SQLiteScanRepository(db_path=settings.database_path)
 
     scanner = Scanner(
         storage=storage,
@@ -277,7 +277,11 @@ def _exit_with_error(message: str) -> NoReturn:
     raise typer.Exit(code=1)
 
 
-def _select_storage(demo: bool, gdrive: bool) -> Storage:
+def _select_storage(
+        demo: bool, 
+        gdrive: bool,
+        settings: Settings
+) -> Storage:
     if demo:
         return DemoStorage()
 
