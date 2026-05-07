@@ -292,6 +292,9 @@ def _select_storage(
         creds = load_credentials(settings.google_token_path)
         client = GoogleDriveClient(creds)
 
-        return GoogleDriveStorage(client)
+        return GoogleDriveStorage(
+            client=client,
+            allowed_extensions=settings.allowed_extensions
+        )
 
     _exit_with_error("No storage selected. Use --demo or --gdrive.")

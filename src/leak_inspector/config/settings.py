@@ -36,7 +36,7 @@ class Settings(BaseSettings):
     # App config
     database_path: Path
     reports_dir: Path
-    # allowed_extensions: List[str] = Field(default_factory=lambda: [".pdf", ".docx", ".txt"])
+    allowed_extensions: List[str] = Field(default_factory=lambda: [".pdf", ".docx", ".txt"])
 
     class Config:
         arbitrary_types_allowed = True

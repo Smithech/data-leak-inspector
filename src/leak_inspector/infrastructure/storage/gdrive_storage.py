@@ -1,4 +1,5 @@
 from datetime import datetime
+from pathlib import Path
 from typing import Iterable
 
 from leak_inspector.application.ports.storage import Storage
@@ -11,8 +12,15 @@ class GoogleDriveStorage(Storage):
     Storage implementation for Google Drive.
     """
 
-    def __init__(self, client: GoogleDriveClient):
+    def __init__(
+            self, 
+            client: GoogleDriveClient,
+            allowed_extensions: list[str]
+    ):
         self.client = client
+        self.allowed_extensions = {
+            ext.lower() for ext in allowed_extensions
+        }
 
     def list_files(self) -> Iterable[FileMetadata]:
         """
@@ -22,6 +30,11 @@ class GoogleDriveStorage(Storage):
         raw_files = self.client.list_files()
 
         for file in raw_files:
+            extension = Path(file["name"]).suffix.lower()
+
+            if extension in self.allowed_extensions:
+                continue
+
             yield FileMetadata(
                 id=file["id"],
                 name=file["name"],
