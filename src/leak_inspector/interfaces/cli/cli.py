@@ -28,6 +28,7 @@ from leak_inspector.infrastructure.persistence.sqlite_repository import (
 from leak_inspector.infrastructure.reporting.json_reporter import JsonReporter
 from leak_inspector.infrastructure.storage.demo_storage import DemoStorage
 from leak_inspector.infrastructure.storage.gdrive_storage import GoogleDriveStorage
+from leak_inspector.interfaces.cli.banner import render_banner
 from leak_inspector.interfaces.cli.render import render_scan_results
 from leak_inspector.logging.config import configure_logging
 from leak_inspector.pii.registry import load_detectors
@@ -43,6 +44,8 @@ def init():
     """
     Initialize DLI configuration and create default config file.
     """
+    render_banner()
+
     paths = AppPaths()
 
     # -------------------------
@@ -142,6 +145,8 @@ def auth():
     """
     from leak_inspector.infrastructure.gdrive.auth import authenticate
 
+    render_banner()
+
     if not settings.google_credentials_path.exists():
         typer.secho(
             "credentials.json not found. Run `dli init` first.",
@@ -192,6 +197,8 @@ def scan(
         dli scan --demo
         dli scan --demo --report report.json
     """
+    render_banner()
+    
     if demo:
         typer.echo("Scanning demo dataset...\n")
     elif gdrive:
