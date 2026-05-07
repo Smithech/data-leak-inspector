@@ -1,0 +1,22 @@
+site_name: Data Leak Inspector
+
+theme:
+  name: material
+
+plugins:
+
+  - search
+
+  - i18n:
+      docs_structure: folder
+
+      languages:
+
+        - locale: es
+          default: true
+          name: Español
+          build: true
+
+        - locale: en
+          name: English
+          build: true
