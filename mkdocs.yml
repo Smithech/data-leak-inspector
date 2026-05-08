@@ -5,8 +5,38 @@ strict: false
 theme:
   name: material
 
-plugins:
+  features:
+    - navigation.tabs
+    - navigation.sections
+    - navigation.expand
+    - navigation.top
+    - navigation.instant
+    - navigation.tracking
 
+    - search.highlight
+    - search.suggest
+    - search.share
+
+    - content.code.copy
+    - content.code.annotate
+
+    - toc.follow
+    - toc.integrate
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+
+  - pymdownx.tabbed:
+      alternate_style: true
+
+  - toc:
+      permalink: true
+
+plugins:
   - search
 
   - awesome-pages
