@@ -1,9 +1,33 @@
 site_name: Data Leak Inspector
 
+repo_name: Smithech/data-leak-inspector
+repo_url: https://github.com/Smithech/data-leak-inspector
+
 strict: false
 
 theme:
   name: material
+
+  logo: assets/logo.png
+  favicon: assets/favicon.png
+
+  icon:
+    repo: fontawesome/brands/github
+
+  palette:
+  - scheme: default
+    primary: blue
+    accent: indigo
+    toggle:
+      icon: material/weather-night
+      name: Cambiar a modo oscuro
+
+  - scheme: slate
+    primary: blue
+    accent: indigo
+    toggle:
+      icon: material/weather-sunny
+      name: Cambiar a modo claro
 
   features:
     - navigation.tabs
@@ -12,6 +36,7 @@ theme:
     - navigation.top
     - navigation.instant
     - navigation.tracking
+    - navigation.footer
 
     - search.highlight
     - search.suggest
@@ -22,6 +47,23 @@ theme:
 
     - toc.follow
     - toc.integrate
+
+extra:
+    social:
+      - icon: fontawesome/brands/github
+        link: https://github.com/Smithech
+        name: GitHub
+
+      - icon: fontawesome/brands/python
+        link: https://pypi.org/project/data-leak-inspector/
+        name: PyPI
+
+      - icon: fontawesome/brands/linkedin
+        link: https://www.linkedin.com/in/johansmithrueda/
+        name: LinkedIn  
+  
+extra_css:
+  - stylesheets/extra.css
 
 markdown_extensions:
   - admonition
