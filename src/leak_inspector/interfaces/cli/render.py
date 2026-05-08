@@ -56,12 +56,6 @@ def _render_basic(results):
         ),
     )
 
-    counts = {
-        "public": 0,
-        "shared": 0,
-        "private": 0,
-    }
-
     counts = {"public": 0, "shared": 0, "private": 0}
 
     for result in results:
@@ -73,7 +67,7 @@ def _render_basic(results):
         typer.echo(f" {result.name}")
 
         if result.exposure_reason:
-            typer.echo(f"          → {result.exposure_reason}")
+            typer.secho(f"          → {result.exposure_reason}", fg=typer.colors.CYAN)
 
         counts[level] += 1
 
