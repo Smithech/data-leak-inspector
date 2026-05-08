@@ -1,0 +1,7 @@
+title: Comands
+
+nav:
+  - Init: init.md
+  - Auth: auth.md
+  - Scan: scan.md
+  - logout: logout.md

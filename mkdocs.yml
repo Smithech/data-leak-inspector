@@ -1,5 +1,7 @@
 site_name: Data Leak Inspector
 
+strict: false
+
 theme:
   name: material
 
@@ -7,8 +9,14 @@ plugins:
 
   - search
 
+  - awesome-pages
+
   - i18n:
       docs_structure: folder
+
+      reconfigure_material: true
+
+      fallback_to_default: true
 
       languages:
 
@@ -17,6 +25,30 @@ plugins:
           name: Español
           build: true
 
+          nav:
+            - Inicio: index.md 
+            - Comandos: 
+              - comandos/auth.md
+              - comandos/init.md
+              - comandos/logout.md
+              - comandos/scan.md
+            - Tutoriales: tutoriales/overview.md 
+            - FAQ: faq.md
+            - Privacidad: privacidad.md
+            - Changelog: changelog.md
+
         - locale: en
           name: English
           build: true
+
+          nav:
+            - Home: index.md
+            - Commands: 
+              - comandos/auth.md
+              - comandos/init.md
+              - comandos/logout.md
+              - comandos/scan.md
+            - Tutorials: tutorials/overview.md  
+            - FAQ: faq.md
+            - Privacy: privacy.md
+            - Changelog: changelog.md
