@@ -25,10 +25,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install mkdocs-material
-          pip install mkdocs-static-i18n
-          pip install mkdocs-mermaid2-plugin
-          pip install pymdown-extensions
+          run: pip install .[dev]
 
       - name: Deploy documentation
         run: mkdocs gh-deploy --force
