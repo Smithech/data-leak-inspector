@@ -2,6 +2,7 @@ site_name: Data Leak Inspector
 
 repo_name: Smithech/data-leak-inspector
 repo_url: https://github.com/Smithech/data-leak-inspector
+site_url: https://smithech.github.io/data-leak-inspector/
 
 strict: false
 
