@@ -5,35 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on Keep a Changelog,
 and this project adheres to Semantic Versioning.
 
-## [Unreleased]
+
+## [0.2.0] - 2026-05-08
 
 ### Added
-- 
-
-### Changed
-- 
-
-### Fixed
-- 
-
-### ⚠️ Breaking Changes
-- 
-
-
-## [0.2.0] - 2026-05-
-
-### Added
-- `init` command to
-- `auth` command to
-- `logout` command to
-- escaneo filtro por extensiones (configurable file extension filtering for Google Drive scans)
+- `init` command to initialize project and Google Drive setup.
+- `auth` command to authenticate with Google and store credentials.
+- `logout` command to remove stored credentials.
+- Configurable file extension filtering for Google Drive scans.
 
 ### Changed
 - The application now uses the operating system's standard configuration directory (XDG on Linux/macOS, AppData on Windows)
-
-### Fixed
-- `--demo` flag to use bundled demo data for basic scanning.
-- `--report` flag to export scan results as JSON
 
 ### ⚠️ Breaking Changes
 - Configuration and credentials will be moved to the new OS-specific location and must be migrated manually
