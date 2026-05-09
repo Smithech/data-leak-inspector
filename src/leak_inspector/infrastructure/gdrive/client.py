@@ -21,7 +21,11 @@ class GoogleDriveClient:
             response = (
                 self.service.files()
                 .list(
-                    q="mimeType != 'application/vnd.google-apps.folder'",
+                    q=(
+                        "mimeType != 'application/vnd.google-apps.folder'"
+                        "and 'me' in owners "
+                        "and trashed = false"
+                    ),
                     spaces="drive",
                     fields="nextPageToken, files(id, name, mimeType, modifiedTime, permissions(type, role))",
                     pageToken=page_token,

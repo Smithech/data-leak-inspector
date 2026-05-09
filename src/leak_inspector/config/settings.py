@@ -51,7 +51,7 @@ def default_settings(paths: AppPaths) -> dict:
         "google_token_path": str(paths.token_path),
         "database_path": str(paths.data_dir / "scans.db"),
         "reports_dir": str(paths.data_dir / "reports"),
-        #"allowed_extensions": [".pdf", ".docx", ".txt"],
+        "allowed_extensions": [".pdf", ".docx", ".txt"],
     }
 
 
